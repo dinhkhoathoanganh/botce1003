@@ -19,6 +19,4 @@ sheet.update_acell('C2', 'Blue')
 all_cells = sheet.range('A1:C6')
 print(all_cells)
 for cell in all_cells:
- print cell.value
-
-
+ print (cell.value)
