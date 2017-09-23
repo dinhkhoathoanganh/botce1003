@@ -1,0 +1,15 @@
+#Main file for ChipsMORE bot
+#Name the variables in this format: example_variable
+#Code according to functions
+
+import requests
+import json
+
+#Insert your functions here
+
+
+#Main programme function
+def main():
+  pass
+
+main()
