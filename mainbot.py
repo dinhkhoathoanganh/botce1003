@@ -1,44 +1,64 @@
+
+import sys
 import time
-import datetime
 import telepot
 from telepot.loop import MessageLoop
-from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton
+from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
 
 
 
-#print message content
-def content(msg):
- print('message:',msg['text'])
- return msg['text']
+#message content
+def content_msg(msg):
+ return msg['text'].lower()
 
 
 #send a message
-def send(content):#content(string)
+def send_msg(chat_id, content):#content(string)
  bot.sendMessage(chat_id,content)
 
 
+#send a inlinekeyboard
+def inline_mcq(chat_id, question,choice_number, choices):
+#question(string) choice_number(integer) choices(list)
+#example for an array: (['press 1',1],['press 2',2],['press 3',3])
+#(1) is a list or an integer, (1,) is a tuple
+ inline_keyboard = [[InlineKeyboardButton(text=choices(0), callback_data=choices(0)],]
+ for i in range(1,choice_number)
+  inline_keyboard = inline_keyboard + [[InlineKeyboardButton(text=choices(i), callback_data=choices(i)]]
+ keyboard = InlineKeyboardMarkup(inline_keyboard)
 
-#send a multiple-choice question
-def send_mcq(chat_id, question, keyboard_list):#question(string) keyboard_list is a list including elements with forms <KeyboardButton(text='<string name of the button>')>. Example: [KeyboardButton(text='Yes'),KeyboardButton(text='No')].
- bot.sendMessage(chat_id, question, reply_markup=ReplyKeyboardMarkup(keyboard=[keyboard_list]))
+ bot.sendMessage(chat_id, 'Use inline keyboard', reply_markup=keyboard)
 
 
+    
 
+def on_callback_query(msg):
+ query_id, from_id, query_data = telepot.glance(msg, flavor='callback_query')
+ print('Callback Query:',query_data)
 
+ bot.answerCallbackQuery(query_id, text='Got it')
 
-
-
-#Mainbot starts from here
-def mainbot(msg):
+#mainbot
+def on_chat_message(msg):
  content_type, chat_type, chat_id = telepot.glance(msg)
- #start coding from here
+#test
+ inline_mcq(chat_id,'this is the question',3,(1,2,3))
+#endtest
 
 
-bot = telepot.Bot('446414243:AAG13E9L9ifrrYJc0JNHIHMpHBK-306sd2A')#paste the key here
-MessageLoop(bot, mainbot).run_as_thread()
-print ('Listening ...')
 
 
-# Keep the program running.
+
+
+
+
+
+
+
+bot = telepot.Bot('446414243:AAG13E9L9ifrrYJc0JNHIHMpHBK-306sd2A')
+MessageLoop(bot, {'chat': on_chat_message,
+                  'callback_query': on_callback_query}).run_as_thread()
+print('Listening ...')
+
 while 1:
- time.sleep(10)
+    time.sleep(10)
