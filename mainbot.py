@@ -31,3 +31,7 @@ bot = telepot.Bot('446414243:AAG13E9L9ifrrYJc0JNHIHMpHBK-306sd2A')#paste the key
 bot.message_loop(handle)
 print ('Listening ...')
 
+
+# Keep the program running.
+while 1:
+ time.sleep(10)
