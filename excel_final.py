@@ -2,7 +2,7 @@ from openpyxl import load_workbook
 import datetime
 #load workbook from a file and grab the active worksheet
 work_book=load_workbook('canteen_restaurant_list.xlsx')
-work_sheet=work_book['Sheet2']
+work_sheet=work_book['Sheet2'] #open 'Sheet2' <name of sheet>
 
 #return cell value function
 def cellvalue(x): #x is the cell address(str)
@@ -22,5 +22,5 @@ def assign(x,y): #x is the cell address(str)
 
 #program starts from here
 assign('A1',20)
-save_xl("canteen_restaurant_list.xlsx")
+save_xl('canteen_restaurant_list.xlsx')
 
