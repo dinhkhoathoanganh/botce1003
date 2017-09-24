@@ -18,7 +18,7 @@ def username(msg):
 
 
 
-#receive message
+#receive message and answer
 def handle(msg):
  content_type, chat_type, chat_id = telepot.glance(msg)
  print('msg=',msg)
