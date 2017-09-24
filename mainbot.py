@@ -31,7 +31,7 @@ def send_mcq(chat_id, question, keyboard_list):#question(string) keyboard_list i
 #Mainbot starts from here
 def mainbot(msg):
  content_type, chat_type, chat_id = telepot.glance(msg)
- 
+ #start coding from here
 
 
 bot = telepot.Bot('446414243:AAG13E9L9ifrrYJc0JNHIHMpHBK-306sd2A')#paste the key here
