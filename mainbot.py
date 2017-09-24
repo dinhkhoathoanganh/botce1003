@@ -2,20 +2,25 @@ import time
 import datetime
 import telepot
 from telepot.loop import MessageLoop
+from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton
 
-#receive message and answer
-def handle(msg):
- content_type, chat_type, chat_id = telepot.glance(msg)
- print('msg=',msg)
+
+
+#print message content
+def content(msg):
  print('message:',msg['text'])
- print('glance:',content_type, chat_type, chat_id)
- msgfrom=msg['from']
- print(msgfrom, type(msgfrom))
-#answer every msg with 'dit me'
- if True:
-  bot.sendMessage(chat_id, 'dit me '+msgfrom['first_name']+' '+msgfrom['last_name'])
-#print the time
-  bot.sendMessage(chat_id,'bay gio la may gio nhi? :'+str(datetime.datetime.now()))
+ return msg['text']
+
+
+#send a message
+def send(content):#content(string)
+ bot.sendMessage(chat_id,content)
+
+
+
+#send a multiple-choice question
+def send_mcq(chat_id, question, keyboard_list):#question(string) keyboard_list is a list including elements with forms <KeyboardButton(text='<string name of the button>')>. Example: [KeyboardButton(text='Yes'),KeyboardButton(text='No')].
+ bot.sendMessage(chat_id, question, reply_markup=ReplyKeyboardMarkup(keyboard=[keyboard_list]))
 
 
 
@@ -23,12 +28,14 @@ def handle(msg):
 
 
 
+#Mainbot starts from here
+def mainbot(msg):
+ content_type, chat_type, chat_id = telepot.glance(msg)
+ 
 
 
-
-#bot started
 bot = telepot.Bot('446414243:AAG13E9L9ifrrYJc0JNHIHMpHBK-306sd2A')#paste the key here
-bot.message_loop(handle)
+MessageLoop(bot, mainbot).run_as_thread()
 print ('Listening ...')
 
 
