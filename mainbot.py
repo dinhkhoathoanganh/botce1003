@@ -25,6 +25,7 @@ def inline_mcq(chat_id):
  keyboard = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Press me', callback_data='press')],])
 # print('inline keyboard type', type(inline_keyboard))
 #For this case, i will use exec statement.[tested]
+#and read this also http://telepot.readthedocs.io/en/latest/#message-has-a-flavor
 
 
  bot.sendMessage(chat_id, 'Use inline keyboard', reply_markup=keyboard)
