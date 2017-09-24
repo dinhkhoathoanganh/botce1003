@@ -18,14 +18,14 @@ def send_msg(chat_id, content):#content(string)
 
 
 #send a inlinekeyboard
-def inline_mcq(chat_id, question,choice_number, choices):
+def inline_mcq(chat_id):
 #question(string) choice_number(integer) choices(list)
 #example for an array: (['press 1',1],['press 2',2],['press 3',3])
 #(1) is a list or an integer, (1,) is a tuple
- inline_keyboard = [[InlineKeyboardButton(text=choices(0), callback_data=choices(0)],]
- for i in range(1,choice_number)
-  inline_keyboard = inline_keyboard + [[InlineKeyboardButton(text=choices(i), callback_data=choices(i)]]
- keyboard = InlineKeyboardMarkup(inline_keyboard)
+ keyboard = InlineKeyboardMarkup(inline_keyboard=[[InlineKeyboardButton(text='Press me', callback_data='press')],])
+# print('inline keyboard type', type(inline_keyboard))
+#For this case, i will use exec statement.[tested]
+
 
  bot.sendMessage(chat_id, 'Use inline keyboard', reply_markup=keyboard)
 
@@ -36,13 +36,15 @@ def on_callback_query(msg):
  query_id, from_id, query_data = telepot.glance(msg, flavor='callback_query')
  print('Callback Query:',query_data)
 
- bot.answerCallbackQuery(query_id, text='Got it')
+
+# bot.answerCallbackQuery(query_id, text='Got it')
 
 #mainbot
 def on_chat_message(msg):
  content_type, chat_type, chat_id = telepot.glance(msg)
 #test
- inline_mcq(chat_id,'this is the question',3,(1,2,3))
+ inline_mcq(chat_id)
+
 #endtest
 
 
@@ -56,8 +58,7 @@ def on_chat_message(msg):
 
 
 bot = telepot.Bot('446414243:AAG13E9L9ifrrYJc0JNHIHMpHBK-306sd2A')
-MessageLoop(bot, {'chat': on_chat_message,
-                  'callback_query': on_callback_query}).run_as_thread()
+MessageLoop(bot, {'chat': on_chat_message, 'callback_query': on_callback_query}).run_as_thread()
 print('Listening ...')
 
 while 1:
