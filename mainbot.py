@@ -34,7 +34,7 @@ def main(msg):
 
 
 bot = telepot.Bot('446414243:AAG13E9L9ifrrYJc0JNHIHMpHBK-306sd2A')
-MessageLoop(bot, mainbot).run_as_thread()
+MessageLoop(bot, main).run_as_thread()
 print('Listening ...')
 
 while 1:
