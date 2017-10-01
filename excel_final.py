@@ -1,44 +1,46 @@
-from openpyxl import load_workbook
-
+import openpyxl
 import datetime
-#load workbook from a file and grab the active worksheet
-work_book=load_workbook('canteen_restaurant_list.xlsx')
-work_sheet=work_book['Sheet2'] #open 'Sheet2' <name of sheet>
 
-#return cell value function
-def cell_value(x): #x is the cell address(str)
- return work_sheet[x].value
+class xl:
 
-#save the file
-def save_xl(z): #z is the file name
- work_book.save(z)
+ #load a workbook from file
+ def load_wb(file_name): #file_name (str)
+  return openpyxl.load_workbook(file_name)
 
-#write datetime to cell
-def write_datetime(x): #x is the cell address(str)
- work_sheet[x] = datetime.datetime.now()
+ #load a worksheet from a worksheet
+ def load_ws(work_book, ws_name): #ws_name (str)
+  return work_book[ws_name]
 
-#assign data
-def assign(x,y): #x is the cell address(str)
- work_sheet[x]=y
+ #save a workbook to file
+ def save_wb(work_book, file_name):
+  work_book.save(file_name)
 
-#return column value
-def column_value(x): #x is column addr (str)
- value_list = []
- for i in range(len(work_sheet[x])):
-  if str(type(work_sheet[x][i].value)) != "<class 'NoneType'>":
-   value_list = value_list + [work_sheet[x][i].value]
- return value_list
+ #return a cell content
+ def cell(work_sheet, cell_addr):
+  return work_sheet[cell_addr].value
+ #assign data to a cell of a worksheet
+ def assign(work_sheet, cell_addr, cell_content):
+  work_sheet[cell_addr] = cell_content
 
-#return corresponding cell
-def cor_value(x,y,z): #x,y is the column addr, z is the value (str, str)
- value_list = []
- for i in range(len(work_sheet[x])):
-  if z == str(work_sheet[x][i].value):
-   cell_rows = str(i + 1)
- return cell_value(y+cell_rows)
+ #return content of a column
+ def column(work_sheet, column):
+  content = []
+  for i in range(len(work_sheet[column_addr])):
+   if str(type(work_sheet[column_addr][i].value)) != "<class 'NoneType'>":
+    content = content + [work_sheet[column_addr][i]]
+  return content
 
-#program starts from here
-assign('A1',20)
-print(cor_value('A','B','banana'))
-save_xl('canteen_restaurant_list.xlsx')
+ #return corresponding content
+ def cor_content(work_sheet,column1, column2, cell1_value):
+  content = []
+  for i in range(len(work_sheet[column1])):
+   if cell1_value == str(work_sheet[column1][i].value):
+    cell_row = str(i + 1)
+  return cell(column2 + cell_row)
 
+#PROGRAM STARTS
+mywb = xl.load_wb('test.xlsx')
+myws = xl.load_ws(mywb,'test')
+xl.assign(myws, 'C3', 'fuck you mom')
+print(xl.cell(myws, 'C3'))
+xl.save_wb(mywb,'test.xlsx')
