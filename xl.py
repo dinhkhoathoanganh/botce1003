@@ -17,19 +17,41 @@ class xl:
 
  #return a cell content
  def cell(work_sheet, cell_addr):
-  return work_sheet[cell_addr].value
+  return str(work_sheet[cell_addr].value)
 
  #assign data to a cell of a worksheet
  def assign(work_sheet, cell_addr, cell_content):
   work_sheet[cell_addr] = cell_content
 
  #return content of a column
- def column(work_sheet, column):
-  content = []
+ def column(work_sheet, column_addr):
+  content_list = []
   for i in range(len(work_sheet[column_addr])):
+   if str(type(work_sheet[column_addr][i].value)) != "<class 'NoneType'>":
+    content_list = content_list + [work_sheet[column_addr][i].value]
+  return content_list
+
+ #return content of a column-range
+ def col_range(work_sheet, column_addr, row1, row2):
+  content = []
+  for i in range(int(row1), int(row2)+1):
    if str(type(work_sheet[column_addr][i].value)) != "<class 'NoneType'>":
     content = content + [work_sheet[column_addr][i]]
   return content
+
+ #return list of rows of a content
+ def rowlist(work_sheet, column_addr, content):
+  for n in range(len(xl.column(work_sheet,column_addr))):
+   if xl.column(work_sheet,column_addr)[n] == content:
+    content2 = xl.column(work_sheet,column_addr)[n+1]
+  for i in range(len(work_sheet[column_addr])):
+   if str(work_sheet[column_addr][i].value) == content:
+    row1 = i
+   if str(work_sheet[column_addr][i].value) == content2:
+    row2 = i
+  return [row1,row2]
+
+
 
  #return corresponding content
  def cor_content(work_sheet,column1, column2, cell1_value):
@@ -39,19 +61,11 @@ class xl:
     cell_row = str(i + 1)
   return cell(column2 + cell_row)
 
- #return cell addr of a content in a range
- def where(work_sheet,cell1, cell2, content): #cell_range 'A1':'A5' then cell1 = 'A1', cell2 = 'A5'
-  for i in range(int(cell1[1]),int(cell2[1]+1)):
-   if cell(work_sheet,cell1[0] + str(i)) == content:
-    cell_addr = cell1[0] + str(i+1)
-  return cell_addr
-   
-
+ #return list of sheets
+ def sheets(work_book):
+  return work_book.get_sheet_names()
 
 #SAMPLE
-mywb = xl.load_wb('test.xlsx')
-myws = xl.load_ws(mywb,'Sheet2')
-xl.assign(myws, 'C3', 'hihihi')
-print(xl.cell(myws, 'C3'))
-print(xl.where(myws,'A2','A3','a-2'))
-xl.save_wb(mywb,'test.xlsx')
+
+print('Excel has loaded!')
+
