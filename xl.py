@@ -41,16 +41,17 @@ class xl:
 
  #return cell addr of a content in a range
  def where(work_sheet,cell1, cell2, content): #cell_range 'A1':'A5' then cell1 = 'A1', cell2 = 'A5'
-  for i in range(cell1[1],cell2[1]+1):
+  for i in range(int(cell1[1]),int(cell2[1]+1)):
    if cell(work_sheet,cell1[0] + str(i)) == content:
-    cell_addr = cell1[0] + str(i)
+    cell_addr = cell1[0] + str(i+1)
   return cell_addr
    
 
 
-#PROGRAM STARTS
+#SAMPLE
 mywb = xl.load_wb('test.xlsx')
-myws = xl.load_ws(mywb,'test')
-xl.assign(myws, 'C3', 'fuck you mom')
+myws = xl.load_ws(mywb,'Sheet2')
+xl.assign(myws, 'C3', 'hihihi')
 print(xl.cell(myws, 'C3'))
+print(xl.where(myws,'A2','A3','a-2'))
 xl.save_wb(mywb,'test.xlsx')
