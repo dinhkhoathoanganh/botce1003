@@ -43,9 +43,14 @@ def on_chat_message(msg):
     if msg['text'] == 'Eat In' or msg['text'] == "/eatin" :
         customkeyboard('Dish Name','Ingredient','Do you want to search by dish name or by ingredient ?',msg)
 
-    if 'Ingredient' in check.filename or 'Dish Name' in check.filename :
-        print (msg['text'])
-        # Phan cua chi Hoang Anh day 
+    if 'Ingredient' in check.filename  :
+        print ( "Ing" ,msg['text'])
+        check.filename = []
+        # Phan cua chi Hoang Anh day
+
+    if 'Dish Name' in check.filename :
+        print ( "Dish" ,msg['text'])
+        check.filename = []
 
 
 
