@@ -11,6 +11,8 @@ from telepot.namedtuple import InlineQueryResultArticle, InlineQueryResultPhoto,
 
 bot = telepot.Bot('449387239:AAEEseg7LHllpcAAKc_gfzEKV-VRC3CQrsU')
 
+from credentialshhanh import *
+from foodapi import *
 
 
 response = bot.getUpdates()
@@ -46,16 +48,13 @@ def on_chat_message(msg):
     if 'Ingredient' in check.filename  :
         print ( "Ing" ,msg['text'])
         check.filename = []
-        # Phan cua chi Hoang Anh day
+        puppy_search(msg['text'])
 
     if 'Dish Name' in check.filename :
         print ( "Dish" ,msg['text'])
         check.filename = []
+        food2fork_search(msg['text'])
 
-
-
-        
-        check.filename = []
 
     if msg['text'] == "Dish Name" :
         markup = ReplyKeyboardRemove()
