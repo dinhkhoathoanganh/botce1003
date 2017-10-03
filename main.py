@@ -42,10 +42,10 @@ def on_callback_query(msg):
   canteen = xl.load_ws(wb, query_data) #canteen is the sheet user has chosen
   print(canteen)
   canteen_name = str(query_data)
-  keyboard.inlinequery(from_id, xl.column(canteen,'C'), 'You did choose '+ canteen_name +' ,Choose a stall')
+  keyboard.inlinequery(from_id, xl.column(canteen,'C'), 'You did choose '+ canteen_name +'. Choose a stall')
 
  if chat_history.lastest_message2(from_id) == 'A Canteen':
-  keyboard.inlinequery(from_id, ['All dishes','Recommended ones'], 'Do you want to get all the dishes or recommended by our users?')
+  keyboard.inlinequery(from_id, ['All dishes','Recommended ones'], 'You did choose'+ query_data +'. Do you want to get all the dishes or recommended by our users?')
 
  if query_data == 'All dishes' and chat_history.lastest_message3(from_id) == 'A Canteen':
   canteen = xl.load_ws(wb,chat_history.lastest_message2(from_id))
@@ -54,8 +54,7 @@ def on_callback_query(msg):
   row1 = xl.rowlist(canteen, 'C', stall_name)[0]
   row2 = xl.rowlist(canteen, 'C', stall_name)[1]
   for i in range(row1, row2 +1):
-   bot.sendMessage(from_id, xl.cell(canteen,'D'+str(i)))
-   bot.sendMessage(from_id, xl.cell(canteen,'E'+str(i)))
+   bot.sendMessage(from_id, xl.cell(canteen,'D'+str(i)) +', '+ xl.cell(canteen,'E'+str(i)))
    bot.sendMessage(from_id, '...')
 
   bot.sendMessage(from_id, 'Type "eatntu" to restart')
@@ -67,9 +66,7 @@ def on_callback_query(msg):
   row2 = xl.rowlist(canteen, 'C', stall_name)[1]
   for i in range(row1, row2 +1):
    if 'Yes' in xl.cell(canteen,'F'+str(i)):
-    bot.sendMessage(from_id, xl.cell(canteen,'D'+str(i)))
-    bot.sendMessage(from_id, xl.cell(canteen,'E'+str(i)))
-    bot.sendMessage(from_id, xl.cell(canteen,'F'+str(i)))
+    bot.sendMessage(from_id, xl.cell(canteen,'D'+str(i)) +', '+ xl.cell(canteen,'F'+str(i)) +', '+ xl.cell(canteen,'E'+str(i)))
     bot.sendMessage(from_id, '...')
   bot.sendMessage(from_id, 'Type "eatntu" to restart')
 
@@ -92,10 +89,14 @@ def on_callback_query(msg):
 
  if chat_history.lastest_message1(from_id) == 'A Stall':
   stall_name = query_data
-  keyboard.inlinequery(from_id, xl.sheets(wb), 'Here is the list of canteen which has your chosen stall')
+  canteen_list = []
+  for i in range(len(xl.sheets(wb))):
+   if stall_name in xl.column(xl.load_ws(wb, xl.sheets(wb)[i]), 'C'):
+    canteen_list = canteen_list + [xl.sheets(wb)[i]]
+  keyboard.inlinequery(from_id, canteen_list, 'Here is the list of canteen which has '+ query_data)
 
  if chat_history.lastest_message2(from_id) == 'A Stall':
-  keyboard.inlinequery(from_id, ['All dishes','Recommended ones'], 'Do you want to get all the dishes or recommended by our users?')
+  keyboard.inlinequery(from_id, ['All dishes','Recommended ones'], 'You did choose'+ query_data +'. Do you want to get all the dishes or recommended by our users?')
 
  if query_data == 'All dishes' and chat_history.lastest_message3(from_id) == 'A Stall':
   canteen = xl.load_ws(wb,chat_history.lastest_message1(from_id))
@@ -104,8 +105,7 @@ def on_callback_query(msg):
   row1 = xl.rowlist(canteen, 'C', stall_name)[0]
   row2 = xl.rowlist(canteen, 'C', stall_name)[1]
   for i in range(row1, row2 +1):
-   bot.sendMessage(from_id, xl.cell(canteen,'D'+str(i)))
-   bot.sendMessage(from_id, xl.cell(canteen,'E'+str(i)))
+   bot.sendMessage(from_id, xl.cell(canteen,'D'+str(i)) +', '+ xl.cell(canteen,'E'+str(i)))
    bot.sendMessage(from_id, '...')
   bot.sendMessage(from_id, 'Type "eatntu" to restart')
  if query_data == 'Recommended ones' and chat_history.lastest_message3(from_id) == 'A Stall':
@@ -116,9 +116,7 @@ def on_callback_query(msg):
   row2 = xl.rowlist(canteen, 'C', stall_name)[1]
   for i in range(row1, row2 +1):
    if 'Yes' in xl.cell(canteen,'F'+str(i)):
-    bot.sendMessage(from_id, xl.cell(canteen,'D'+str(i)))
-    bot.sendMessage(from_id, xl.cell(canteen,'E'+str(i)))
-    bot.sendMessage(from_id, xl.cell(canteen,'F'+str(i)))
+    bot.sendMessage(from_id, xl.cell(canteen,'D'+str(i)) +', '+xl.cell(canteen,'E'+str(i)) +', '+xl.cell(canteen,'F'+str(i)))
     bot.sendMessage(from_id, '...')
   bot.sendMessage(from_id, 'Type "eatntu" to restart')
 
@@ -132,7 +130,7 @@ def on_callback_query(msg):
   dish_name = str(random.choice(xl.column(canteen, 'D')))
   price = xl.cor_content(canteen,'D','E', dish_name)
   stall_name = xl.stall(canteen, 'D', 'C', dish_name)
-  bot.sendMessage(from_id, dish_name +', '+price+' at '+stall_name +' in '+ canteen_name)
+  bot.sendMessage(from_id, dish_name +', '+price+' at "'+stall_name +'" in "'+ canteen_name+ '."')
   keyboard.inlinequery(from_id , ['Re-random a dish'] , 'Type "eatntu" to restart' ) 
   
 

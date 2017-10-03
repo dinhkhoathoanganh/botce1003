@@ -1,15 +1,8 @@
 
 import telepot
-
-from telepot.loop import MessageLoop
-
-import time
-
-from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, ForceReply
+from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
 
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
-
-from telepot.namedtuple import InlineQueryResultArticle, InlineQueryResultPhoto, InputTextMessageContent
 bot = telepot.Bot('446414243:AAG13E9L9ifrrYJc0JNHIHMpHBK-306sd2A')
 class keyboard :
     def customkeyboard(choice1 , choice2 , message, msg) :
