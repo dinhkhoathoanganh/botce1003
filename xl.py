@@ -59,7 +59,15 @@ class xl:
   for i in range(len(work_sheet[column1])):
    if cell1_value == str(work_sheet[column1][i].value):
     cell_row = str(i + 1)
-  return cell(column2 + cell_row)
+  return xl.cell(work_sheet,column2 + cell_row)
+ #return stall name
+ def stall(work_sheet, column1, column2, cell_value):
+  for i in range(len(work_sheet[column1])):
+   if cell_value == str(work_sheet[column1][i].value):
+    row = i +1
+  while str(type(work_sheet[column2][row-1].value)) == "<class 'NoneType'>":
+   row = row -1
+  return xl.cell(work_sheet, column2 + str(row))
 
  #return list of sheets
  def sheets(work_book):
