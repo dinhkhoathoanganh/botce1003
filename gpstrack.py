@@ -8,6 +8,7 @@ import math
 # API Call destinations and key
 from credentialshhanh import *
 
+#Template dictionary for canteen locations info
 place_list = {"can B" : ["ChIJ-c0P3AoP2jERmgAasZYsPdM", "76 Nanyang Drive, N2.1, #02-03, Nanyang Technological University, Singapore, 637331",	{"lat": 1.346986, "lng":	103.680168}], "can 2": ["ChIJ_4T7q6EP2jEROVd_kctPf3Y",	"35 Students Walk, #01-01 NTU Canteen 2, Singapore 639548",	{"lat": 1.348431, "lng":	103.685482}]}
 
 class google_maps:
@@ -117,30 +118,27 @@ class google_maps:
 		return sorted_place_list
 
 
-def main():
+def main(): #YOU CAN RUN THIS AND SEE...
 
-	#Get origins and destinations
-	origin = input('enter origin: ')
+	# #Program to sort the canteen list
+	origin = input('enter your current location - origin: ')
 	origin_id, origin_lat_lng = place_id_results(origin)
 
 	print(place_list)
-	# place = input("Your destination place: ")
-	# destination_lat_lng = place_list[place][2]
-
-	# # place2 = input("Your origin place: ")
-	# # origin_lat_lng = place_list[place2][2]
-
-	# print(origin_lat_lng, " $$$ ", destination_lat_lng) #checkpoint
-	
-	# # destination = input('enter destination: ')
-	# # destination_id, destination_lat_lng = place_id_results(destination)
 	
 	sorted_place_list = sort_nearby_place(origin_lat_lng, place_list)
 
-	print(sorted_place_list)
+	print("list of canteen from nearest to furthest: ", sorted_place_list)
+	
 	#################
+	# #Program to Find direction
+	# origin = input('enter your current location - origin: ')
+	# origin_id, origin_lat_lng = place_id_results(origin)
 
-	# #Find direction
+	# destination = input('enter destination: ')
+	# destination_id, destination_lat_lng = place_id_results(destination)
+
+
 	# data = direction(origin_id, destination_id)
 	# instructions = direction_instructions(data)
 	# distance = calculate_distance(data)
