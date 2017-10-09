@@ -41,13 +41,13 @@ def on_chat_message(msg):
   bot.sendMessage(chat_id, "Thanks for sharing your location :)")
   check.user_location = str(msg['location']['latitude']) + "," + str(msg['location']['longitude'])
   print("@@@ ", check.user_location, "@@ ", check.canteen_location_list) #checkpoint
-  keyboard.inlinequery(chat_id , check.canteen_location_list , ' Choose your canteen ! ')
+  keyboard.inlinequery(chat_id , check.canteen_location_list + ["Canteen nearest me!"], ' Choose your canteen ! ')
   
   
  elif content_type == 'text' :    
   chat_history.write_data(chat_id, msg['text'].lower())
   
-  if (keyboard.correction(msg['text']) not in ["Eatntu" , "/eatntu" , "Eat Ntu" , "Eat Out" , "/eatout" , "/eatin" , "Eat In" , "Dish Name" , "Ingredient" , "Give location ?","Search For Direction", "/searchdirection" , "/start","/mydisheslist", "My Dishes List","Food Type"] and chat_history.lastest_message1(chat_id)  not in ["dish name" , "ingredient"]) and chat_history.lastest_message2(chat_id)  not in ["ingredient"] or keyboard.correction(msg['text']) == False :
+  if (keyboard.correction(msg['text']) not in ["Eatntu" , "/eatntu" , "Eat Ntu" , "Eat Out" , "/eatout" , "/eatin" , "Eat In" , "Dish Name" , "Ingredient" , "Give location ?","Search For Direction", "Canteen nearest me!", "/searchdirection" , "/start","/mydisheslist", "My Dishes List","Food Type"] and chat_history.lastest_message1(chat_id)  not in ["dish name" , "ingredient"]) and chat_history.lastest_message2(chat_id)  not in ["ingredient"] or keyboard.correction(msg['text']) == False :
      bot.sendMessage(chat_id , "Oops you have typed in the wrong syntax . Please type 'eatntu' to restart")
   if keyboard.correction(msg['text']) == '/start' :
       bot.sendMessage(chat_id , " Hello and welcome to @eat_NTUbot ! Let's eat the whole NTU together , I mean , eat the food in NTU . Now to start , please type '/eatntu' or 'Eat NTU' !")
@@ -77,7 +77,6 @@ def on_chat_message(msg):
      
   if chat_history.lastest_message1(chat_id) =='ingredient' :
   	 check.ingredient = msg['text']
-  	 print("##ing ", msg['text']) #checkpoint
 
   if chat_history.lastest_message2(chat_id) =='ingredient' :
      food_api.new_id(chat_id,chat_id_list)
@@ -87,6 +86,9 @@ def on_chat_message(msg):
      if keyboard.correction(msg['text']) == 'Nil':
       msg['text'] = " "
       print("##noning ", msg['text']) #checkpoint
+    
+     msg['text']= ' '
+     check.ingredient = 'banana'
      checker = food_api.yummly_search(chat_id,chat_id_list,results_list, None, check.ingredient, msg['text'], None)
      recipe_handler(checker, chat_id)
 
@@ -107,13 +109,10 @@ def on_chat_message(msg):
       
 def recipe_handler(checker, from_id):
   if keyboard.check_error(checker, from_id) == 0:
-    print("#@@ ") #checkpoint
     check.keyin = food_api.search_chat_id(from_id,results_list,1)
     keyboard.inlinequery10(from_id , check.keyin, "Here are the recipes ! (Hint: you can go back to this message if you want to find out more about other dishes; or type /mydisheslist)")  
 
-  else:
-    print("#@ ") #checkpoint
-         
+  else:        
     bot.sendMessage(from_id , keyboard.check_error(checker, from_id)[0] )
 
 def on_callback_query(msg): 
@@ -122,7 +121,6 @@ def on_callback_query(msg):
  #If the query data is in the food type list
  for i in type_options + diet_options:
       if query_data == i:
-        print("## ", query_data)
         food_api.new_id(from_id, chat_id_list)
         checker = food_api.yummly_type_match(from_id, chat_id_list, results_list, query_data)
         recipe_handler(checker, from_id)
@@ -146,7 +144,7 @@ def on_callback_query(msg):
          google_maps.direction(from_id, chat_id_list_dir, results_list_dir, check.user_location, destination)
          instructions = google_maps.direction_instructions(from_id, results_list_dir)
          distance = google_maps.calculate_distance(from_id, results_list_dir)
-         bot.sendMessage(from_id,"Here are the instructions: ")
+         bot.sendMessage(from_id,"Here are the instructions " + query_data + ":")
          if isinstance(instructions, list): #check for []
           bot.sendMessage(from_id , '\n'.join(str(x) for x in instructions)) 
          else:
@@ -166,15 +164,12 @@ def on_callback_query(msg):
   if query_data == i :
     data_index = keyboard.list_order(query_data, headers_yummly)
     checker = food_api.search_chat_id(from_id, results_list, 2, check.recipeindex-1, data_index)
-    print("@@@ ", check.recipeindex) #checkpoint
     print(query_data)
     if keyboard.check_error(checker, from_id) == 0:
-      print("### ", check.recipeindex) #checkpoint
       print_result = food_api.search_chat_id(from_id, results_list, 2, check.recipeindex, data_index)
       print("?### ", print_result) #checkpoint
       if isinstance(print_result, list): #Check for first []
       	if isinstance(print_result[0], list): #check for second []
-      		print("list~!")
       		bot.sendMessage(from_id , ', '.join(str(x) for x in print_result[0]))
       	
       	else:
@@ -186,6 +181,8 @@ def on_callback_query(msg):
        
      # check.keydn = []
      # check.recipeindex = 0
+ if query_data == "Canteen nearest me!":
+  	keyboard.inlinequery(from_id, google_maps.sort_nearby_place(check.user_location, "PlaceID.xlsx", "placeid"), "Food places listed from nearest to furthest for you...")
 
  chat_history.write_data(from_id,query_data)
  databasefile = open('database.txt','a')

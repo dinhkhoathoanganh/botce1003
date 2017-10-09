@@ -53,7 +53,6 @@ class xl:
  def cor_content(work_sheet,column1, column2, cell1_value):
   row = xl.row(work_sheet, column1, cell1_value)
   content = work_sheet[column2+str(row)].value
-  print('cor: ', content)
   return content
 
  #return corresponding content vertically
