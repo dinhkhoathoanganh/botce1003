@@ -22,7 +22,7 @@ class google_maps:
 
 		for i in range(2,len(ws["A"])+1):
 			place_list.append(xl.cell(ws, "A" + str(i)))
-		print(place_list) #checkpoint
+		# print(place_list) #checkpoint
 		return place_list
 
 	#Read file from excel to convert to dictionary of canteens and their respective lat lng in python
@@ -31,14 +31,13 @@ class google_maps:
 		place_list = {}
 
 		for i in range(2,len(ws["A"])+1):
-			print("#", i) #checkpoint
 			canteen = xl.cell(ws, "A" + str(i))
-			lat_lng = {"lat": float(xl.cor_content_col(ws, 1, i, "lat")),"lng": float(xl.cor_content_col(ws, 1, i, "lng"))}
-			place_value = [xl.cor_content(ws,"A", "D", canteen), xl.cor_content(ws,"A", "E", canteen), lat_lng]
-			place_list[xl.cell(ws, "A" + str(i))] = place_value
+			lat_lng = google_maps.canteen_latlng(file, ws_name, canteen)
+			place_list[canteen] = lat_lng
 		# print(place_list) #checkpoint
 		return place_list
 
+	#Read canteen from the 
 	def canteen_latlng(file, ws_name, canteen):
 		ws = xl.load_ws(xl.load_wb(file), ws_name)
 		canteen_latlng = str(xl.cor_content(ws, "A", "D",canteen)) + "," + str(xl.cor_content(ws, "A", "E",canteen))
@@ -113,13 +112,11 @@ class google_maps:
 		instructions = []
 		for i in range (0, len (results_list_dir[chat_id_dir]['routes'][0]['legs'][0]['steps'])):
 			j = results_list_dir[chat_id_dir]['routes'][0]['legs'][0]['steps'][i]['html_instructions']
-			print("@@ ", j)
 			if '<div style="font-size:0.9em">' in j: #Special case in API Google Maps Call
 				j = j.replace('<div style="font-size:0.9em">', '\n')
 				print("FOUND!! ", j, "FOUND ", j)
 			clean_j =  re.sub('\<.*?\>', '', j)
 			instructions.append(clean_j)
-			print("$#$@ ", instructions)
 		return instructions	
 	
 	#Calculate ROUTE distance with googlemaps
@@ -145,7 +142,7 @@ class google_maps:
 	    :p2:     (tup) lat,lon
 	    """
 	    lat1, lng1 = float(point1.split(',')[0]), float(point1.split(',')[1])
-	    lat2, lng2 = list(point2.values())[0], list(point2.values())[1]	
+	    lat2, lng2 = float(point2.split(',')[0]), float(point2.split(',')[1])
 
 	    R = 6371.0 # km - earths's radius	
 
@@ -169,7 +166,7 @@ class google_maps:
 		distance_list = []
 		for place in place_list.items():
 			place_name = place[0]
-			destination_lat_lng = place[1][2]
+			destination_lat_lng = place[1]
 			straight_distance = google_maps.haversine_distance(origin_lat_lng, destination_lat_lng)
 			distance_list.append(straight_distance)	
 

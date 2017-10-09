@@ -165,11 +165,17 @@ class food_api(object):
 
         return results_list
 
+    def yummly_ing_search(chat_id, chat_id_list, results_list, query, ingredients, non_ingredients, cuisine, diet=None, time=None):
+        myingredients = ingredients
+        mynoningredients = non_ingredients
+        food_api.yummly_search(chat_id, chat_id_list, results_list, None, myingredients, mynoningredients, None)
+        return results_list
+
     ##API Call recipe yummly for data
     def yummly_search(chat_id, chat_id_list, results_list, query, ingredients, non_ingredients, cuisine, diet=None, time=None):
         if ingredients != None:
-            ingredients = re.findall(r"[\w']+", ingredients)
-            non_ingredients = re.findall(r"[\w']+", non_ingredients)
+            ingredients = re.findall(r"[\w']+", ingredients.lower())
+            non_ingredients = re.findall(r"[\w']+", non_ingredients.lower())
 
         search_payload = {"_app_id":yummly_id, "_app_key":yummly_key, "q":query, "allowedIngredient[]":ingredients, "allowedDiet[]":diet, "excludedIngredient[]":non_ingredients, "allowedCuisine[]":cuisine, "maxTotalTimeInSeconds":time}
         print("search_payload: ", search_payload) #checkpoint

@@ -16,24 +16,25 @@ class keyboard :
         
         markup = ReplyKeyboardRemove()
         bot.sendMessage(chat_id, 'Oke lah , got it !', reply_markup=markup)
-        markup = ReplyKeyboardMarkup(keyboard=[
-                    [ choice1 , KeyboardButton(text= choice2 )],])
+        markup = ReplyKeyboardMarkup(keyboard=[[ choice1 , KeyboardButton(text= choice2 )],], resize_keyboard=True)
                  
         bot.sendMessage(chat_id, chat, reply_markup=markup)
     def customkeyboard3(choice1 , choice2, choice3 , chat , chat_id) :
         
         markup = ReplyKeyboardRemove()
         bot.sendMessage(chat_id, 'Oke lah , got it !', reply_markup=markup)
-        markup = ReplyKeyboardMarkup(keyboard=[
-                    [ choice1 , choice2, choice3],])
+        markup = ReplyKeyboardMarkup(keyboard=[[ choice1 , choice2,], 
+                                                [choice3],], resize_keyboard=True)
                  
         bot.sendMessage(chat_id, chat, reply_markup=markup)
     def location(chat_id) :
-        keyboard = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='Send My Location',request_location=True)]])
+        markup = ReplyKeyboardRemove()
+        keyboard = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='Sure! Send My Location',request_location=True)]], resize_keyboard=True, one_time_keyboard=True)
         bot.sendMessage(chat_id, 'Give location ?', reply_markup=keyboard)
 
     def inlinequery10(chatid , listx , chat ) :
         all = []
+        print("#### ", listx)
         for i in listx[:10]: #Only take first 10 top results (not to spam the bot chat)
           element = [InlineKeyboardButton(text=  i , callback_data = i)]
           all.append(element)

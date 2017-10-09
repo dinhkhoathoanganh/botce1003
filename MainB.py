@@ -17,84 +17,104 @@ bot = telepot.Bot('406130496:AAFNc17PwDi7mmsYVAg2bYBtsc1LR1OlqVg')
 result_list ={}
 chat_id_list =[]
 
-#headings
+#Recipe Info headings for API CALL
 headers_puppy = {0: "Puppy's Recipe directions", 1: "Puppy's Ingredients", 2: "Puppy's Image"}
 headers_food2fork = {0: "Food2fork's Recipe directions", 1: "Food2fork's Image", 2: "Food2fork's Ingredients and Nutrition Facts", 3: "Food2fork's Rating"}
 headers_yummly = ["Yummly's Recipe directions", "Yummly's Image", "Yummly's Ingredients", "Time needed (seconds)", "Yummly's Rating (out of 4)"]
 
-#list types of food
+#List types of food (only for Yummly)
 type_options =['American', 'Italian', 'Asian', 'Mexican', 'French', 'Southwestern', 'Barbecue', 'Indian', 'Chinese', 'English', 'Mediterranean', 'Greek', 'Spanish', 'German', 'Thai', 'Moroccan', 'Irish', 'Japanese', 'Cuban', 'Hawaiin', 'Swedish', 'Hungarian', 'Portugese']
 diet_options =['Pescetarian', 'Vegan', 'Vegetarian']
 
-#global vaiables for Main
+#The location, latitude and longtitude of Food locations are pre-set to avoid users's spamming the direction. In addition, it will save no. of API Call from Google Maps in subsequent operations
+canteen_location_list = google_maps.excel_to_list("PlaceID.xlsx", "placeid")
+
+#Global vaiables for Main that needed to be modified in multiple functions
 class check :
     keyin = []
     recipeindex = 9999999999
     user_location = ''
     ingredient = ''
-    canteen_location_list = google_maps.excel_to_list("PlaceID.xlsx", "placeid")
     
-
+    
+#Cases for messages received
 def on_chat_message(msg):
  content_type, chat_type, chat_id = telepot.glance(msg)
+ 
+ #If the message is the location user sent
  if content_type == 'location' :
   bot.sendMessage(chat_id, "Thanks for sharing your location :)")
   check.user_location = str(msg['location']['latitude']) + "," + str(msg['location']['longitude'])
-  print("@@@ ", check.user_location, "@@ ", check.canteen_location_list) #checkpoint
-  keyboard.inlinequery(chat_id , check.canteen_location_list + ["Canteen nearest me!"], ' Choose your canteen ! ')
+  print("@@@ ", check.user_location, "@@ ", canteen_location_list) #checkpoint
+  keyboard.inlinequery(chat_id , canteen_location_list + ["Canteen nearest me!"], ' Choose your canteen ! ')
   
-  
+ #If the message is the chat text
  elif content_type == 'text' :    
   chat_history.write_data(chat_id, msg['text'].lower())
-  
-  if (keyboard.correction(msg['text']) not in ["Eatntu" , "/eatntu" , "Eat Ntu" , "Eat Out" , "/eatout" , "/eatin" , "Eat In" , "Dish Name" , "Ingredient" , "Give location ?","Search For Direction", "Canteen nearest me!", "/searchdirection" , "/start","/mydisheslist", "My Dishes List","Food Type"] and chat_history.lastest_message1(chat_id)  not in ["dish name" , "ingredient"]) and chat_history.lastest_message2(chat_id)  not in ["ingredient"] or keyboard.correction(msg['text']) == False :
+  #Check edge cases when the user type spam messages
+  if (keyboard.correction(msg['text']) not in ["Eatntu" , "/eatntu" , "Eat Ntu" , "Eat Out" , "/eatout" , "/eatin" , "Eat In" , "Dish Name" , "Ingredient" , "Give location ?","Search For Direction", "/searchfordirection", "Canteen nearest me!", "/searchdirection" , "/start","/mydisheslist", "My Dishes List","Food Type"] and chat_history.lastest_message1(chat_id)  not in ["dish name" , "ingredient"]) and chat_history.lastest_message2(chat_id)  not in ["ingredient"] or keyboard.correction(msg['text']) == False :
      bot.sendMessage(chat_id , "Oops you have typed in the wrong syntax . Please type 'eatntu' to restart")
+  #Response for /start
   if keyboard.correction(msg['text']) == '/start' :
       bot.sendMessage(chat_id , " Hello and welcome to @eat_NTUbot ! Let's eat the whole NTU together , I mean , eat the food in NTU . Now to start , please type '/eatntu' or 'Eat NTU' !")
-      
+  #Response for /eatNTU with its recognisable variations    
   if keyboard.correction(msg['text'])  == 'Eatntu' or keyboard.correction(msg['text']) == 'Eat Ntu' or msg['text'] == '/eatntu':
      keyboard.customkeyboard3('Eat Out' , 'Eat In ', 'Search For Direction', "let's see what u want to do", chat_id)
-  if keyboard.correction(msg['text']) == 'Eat In' :
+  
+###### EAT IN #####
+  #Response for /eatin with its recognisable variations 
+  if keyboard.correction(msg['text']) == 'Eat In' or msg['text'] == "/eatin" :
      keyboard.customkeyboard3('Dish Name' , 'Ingredient' , "Food Type", "What do you want to search the recipe by?",chat_id)
+  
+  #Response when the user want to search recipes by dish name with its recognisable variations 
   if keyboard.correction(msg['text']) =='Dish Name' :
      keyboard.remove_custom(chat_id)
      bot.sendMessage(chat_id, 'Key in the dish name:')
+  
+  #Response when the user want to search recipes by ingredients with its recognisable variations 
   if keyboard.correction(msg['text']) =='Ingredient' :
      keyboard.remove_custom(chat_id)
-     bot.sendMessage(chat_id, 'Key in the ingredients , seperated by comas :')
+     bot.sendMessage(chat_id, 'Key in the ingredients, seperated by comas :')
+  #Response after user keys in the ingredients he/she wants
   if chat_history.lastest_message1(chat_id) =='ingredient':
      bot.sendMessage(chat_id, 'Key in the ingredients you DONT WANT, seperated by comas (Psst.. if you dont have this, type Nil):')
+  
+  #Response when the user want to search recipes by food type with its recognisable variations
   if keyboard.correction(msg['text']) =='Food Type':
      keyboard.remove_custom(chat_id)
      keyboard.inlinequery(chat_id, type_options + diet_options, 'Which food type are you looking for?')
- 
+  
+  #Search for recipe with dish name's keywords
   if chat_history.lastest_message1(chat_id) =='dish name' :
-     
      food_api.new_id(chat_id,chat_id_list)
-
-     checker = food_api.yummly_search(chat_id,chat_id_list,results_list,msg['text'], None, None, None)
+     #Search based on Yummly search (in case of the API Call Limit reaches, we will switch to Food2Fork)
+     checker = food_api.yummly_search(chat_id,chat_id_list,results_list,msg['text'].lower(), None, None, None)
      recipe_handler(checker, chat_id)
-     
+  
+  #Search for recipe with ingredient's keywords (register ingredients wanted) 
   if chat_history.lastest_message1(chat_id) =='ingredient' :
   	 check.ingredient = msg['text']
 
+  #Search for recipe with ingredient's keywords (register ingredients NOT wanted)  
+  #Search based on Yummly search (in case of the API Call Limit reaches, we will switch to Recipe Puppy) - Recipe Puppy does not have excluded ingredients feature so we will disable this part
   if chat_history.lastest_message2(chat_id) =='ingredient' :
      food_api.new_id(chat_id,chat_id_list)
      print("##in ", check.ingredient) #checkpoint
      print("##noning ", msg['text']) #checkpoint
 
+     #If the user do not want to exclude any ingredients
      if keyboard.correction(msg['text']) == 'Nil':
       msg['text'] = " "
       print("##noning ", msg['text']) #checkpoint
-    
-     msg['text']= ' '
-     check.ingredient = 'banana'
-     checker = food_api.yummly_search(chat_id,chat_id_list,results_list, None, check.ingredient, msg['text'], None)
+
+     checker = food_api.yummly_ing_search(chat_id,chat_id_list,results_list, None, check.ingredient, msg['text'], None)
      recipe_handler(checker, chat_id)
 
-
+  #Print out the lastest list of dishes searched by the user
   if keyboard.correction(msg['text']) == 'My Dishes List' or msg['text'] == '/mydisheslist' :      
-      keyboard.inlinequery10(chat_id , check.keyin, "Here are the recipes ! (again)")
+      keyboard.inlinequery10(chat_id , check.keyin, "Here are your last list of recipes ! (again)")
+  
+  #Response for /eatout with its recognisable variations 
   if keyboard.correction(msg['text']) == 'Eat Out' or msg['text'] == "/eatout" :
       pref.user_type[chat_id] = ''
       pref.canteen[chat_id] = ''
@@ -102,23 +122,29 @@ def on_chat_message(msg):
       pref.stall[chat_id] = ''
       pref.food_type[chat_id] = ''
       keyboard.inlinequery(chat_id, ['A random dish','A Food Type','A Canteen'], 'What do you want to search?')
-  if keyboard.correction(msg['text']) == 'Search For Direction' :
+  
+  #Response for /searchfordirection with its recognisable variations 
+  if keyboard.correction(msg['text']) == 'Search For Direction' or msg['text'] == "/searchfordirection" :
       keyboard.location(chat_id)
        
       
-      
+#Allow users to search individual info of each dish in the result list. To minimize API Call per search, we save the entire search result of each user in the collated dictionary results_list. 
+#When the user need pieces of info, we do not need to perform another API call but to fetch it in results_list. 
+#The dictionary is stored in the program itself in stead of writing in an external file so as to speed up the read and write process.     
 def recipe_handler(checker, from_id):
   if keyboard.check_error(checker, from_id) == 0:
     check.keyin = food_api.search_chat_id(from_id,results_list,1)
-    keyboard.inlinequery10(from_id , check.keyin, "Here are the recipes ! (Hint: you can go back to this message if you want to find out more about other dishes; or type /mydisheslist)")  
-
+    keyboard.inlinequery10(from_id , check.keyin, "Here are most relevant the recipes ! (Hint: you can go back to this message if you want to find out more about other dishes; or type /mydisheslist)")  
+  
+  #Edge case when the API Call return an error. Notify the user (No result from the search, API Call limit reached, Other external errors...)
   else:        
     bot.sendMessage(from_id , keyboard.check_error(checker, from_id)[0] )
 
+#Cases for query received
 def on_callback_query(msg): 
  query_id, from_id, query_data = telepot.glance(msg, flavor='callback_query')
  
- #If the query data is in the food type list
+ #If the query data is in the food type list (When the user chooses to search by food type)
  for i in type_options + diet_options:
       if query_data == i:
         food_api.new_id(from_id, chat_id_list)
@@ -126,21 +152,40 @@ def on_callback_query(msg):
         recipe_handler(checker, from_id)
         break
 
- #If the query data is in my dishes list
+ #If the query data is in the list of dishes searched by the user
  for i in check.keyin :
      if query_data == i :
         check.recipeindex = keyboard.list_order( i , check.keyin)
         keyboard.inlinequery10(from_id , list(headers_yummly) , " What do u want to see about " + i + "?" )
         break
- for i in check.canteen_location_list :
+
+ #If the query data is in the list of info for food API 
+ for i in headers_yummly:
+  if query_data == i :
+    data_index = keyboard.list_order(query_data, headers_yummly)
+    checker = food_api.search_chat_id(from_id, results_list, 2, check.recipeindex-1, data_index)
+    print(query_data)
+    if keyboard.check_error(checker, from_id) == 0:
+      if isinstance(checker, list): #Check for first []
+      	if isinstance(checker[0], list): #check for second []
+      		bot.sendMessage(from_id , ', '.join(str(x) for x in checker[0]))
+      	
+      	else:
+      		bot.sendMessage(from_id , ' '.join(str(x) for x in checker))
+      else:
+      	bot.sendMessage(from_id , checker)
+    else:
+      bot.sendMessage(from_id , keyboard.check_error(checker, from_id)[0] ) 
+    break
+
+###### DIRECTION #####
+ #When user wants to find direction to a certain food location
+ for i in canteen_location_list :
      if query_data == i :
          destination = google_maps.canteen_latlng("PlaceID.xlsx", "placeid", query_data)
          google_maps.new_id(from_id, chat_id_list_dir)
 
-         print("userr location: ", check.user_location) #checkpoint
-         print("dest: ", destination) #checkpoint
-
-
+         #Find direction with Google Maps API and print out the direction instructions + estimated distance
          google_maps.direction(from_id, chat_id_list_dir, results_list_dir, check.user_location, destination)
          instructions = google_maps.direction_instructions(from_id, results_list_dir)
          distance = google_maps.calculate_distance(from_id, results_list_dir)
@@ -152,35 +197,14 @@ def on_callback_query(msg):
 
          bot.sendMessage(from_id,"Estimated distance: "+ str(distance))
 
-         #send photo
+         #Send the statics map snapshot of the location using Google Maps API
          google_maps.get_photo(destination)
          bot.sendPhoto(chat_id=from_id, photo=open('phototestt1.jpeg', 'rb'))
          bot.sendMessage(from_id,"Hope you won't get lost! Type eatNTU restart")
-
-         break 
-
- #If the query data is in the list of info for food API 
- for i in headers_yummly:
-  if query_data == i :
-    data_index = keyboard.list_order(query_data, headers_yummly)
-    checker = food_api.search_chat_id(from_id, results_list, 2, check.recipeindex-1, data_index)
-    print(query_data)
-    if keyboard.check_error(checker, from_id) == 0:
-      print_result = food_api.search_chat_id(from_id, results_list, 2, check.recipeindex, data_index)
-      print("?### ", print_result) #checkpoint
-      if isinstance(print_result, list): #Check for first []
-      	if isinstance(print_result[0], list): #check for second []
-      		bot.sendMessage(from_id , ', '.join(str(x) for x in print_result[0]))
-      	
-      	else:
-      		bot.sendMessage(from_id , ' '.join(str(x) for x in print_result))
-      else:
-      	bot.sendMessage(from_id , print_result)
-    else:
-      bot.sendMessage(from_id , keyboard.check_error(checker, from_id)[0] ) 
-       
-     # check.keydn = []
-     # check.recipeindex = 0
+         break   
+ #Sort the food locations from nearest to furthest in straight-line distance in relation to the user's current location
+ #We used straight-line distance instead of Google Maps's route distance in order to save significant number of API Call 
+ #(Google API has limited API call rate, so this function will be more reliable when the users traffic is high)
  if query_data == "Canteen nearest me!":
   	keyboard.inlinequery(from_id, google_maps.sort_nearby_place(check.user_location, "PlaceID.xlsx", "placeid"), "Food places listed from nearest to furthest for you...")
 
@@ -189,7 +213,7 @@ def on_callback_query(msg):
  databasefile.writelines(str(chat_history.database))
  databasefile.close()
  
-
+###### EAT OUT #####
  wb = xl.load_wb('Canteen Restaurant List.xlsx')
 #USER CHOOSES A RANDOM DISH
  if query_data == 'A random dish' or query_data == 'Re-random a dish':
@@ -250,37 +274,10 @@ def on_callback_query(msg):
      bot.sendMessage(from_id, 'Type "eatntu" to restart')
      
      
-             
-         
-     
-     
-     
-     
-     
-         
-     
-     
- 
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
-     
 
      
  print('Callback Query:', query_id, from_id, query_data)
- bot.answerCallbackQuery(query_id, text='Got it')
+ bot.answerCallbackQuery(query_id, text='Got it...')
  
 
 
