@@ -55,12 +55,12 @@ class food_api(object):
     def fetch_data(search_payload, url):
         search_req = requests.get(url, params=search_payload)
         
-        # print(search_req) #checkpoint
+        print(search_req) #checkpoint
         
         if search_req.status_code == requests.codes.ok:
             data = search_req.json()
             
-            # print(data) #checkpoint
+            print(data) #checkpoint
             
             return data
         elif search_req.status_code == (403 or 409):
@@ -172,12 +172,14 @@ class food_api(object):
             non_ingredients = re.findall(r"[\w']+", non_ingredients)
 
         search_payload = {"_app_id":yummly_id, "_app_key":yummly_key, "q":query, "allowedIngredient[]":ingredients, "allowedDiet[]":diet, "excludedIngredient[]":non_ingredients, "allowedCuisine[]":cuisine, "maxTotalTimeInSeconds":time}
-        # print("search_payload: ", search_payload) #checkpoint
+        print("search_payload: ", search_payload) #checkpoint
         data = food_api.fetch_data(search_payload, yummly_url)
         if food_api.data_check(data, 3) == 1:
-            results_list[chat_id] = ["yummly", data]
+        	print("RESULT FOUND")
+        	results_list[chat_id] = ["yummly", data]
         else:
-            results_list[chat_id] = {"Error": food_api.no_result}
+        	print("NOOOO RESULT FOUND")
+        	results_list[chat_id] = {"Error": food_api.no_result}
 
         return results_list
 

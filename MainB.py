@@ -68,12 +68,11 @@ def on_chat_message(msg):
      keyboard.remove_custom(chat_id)
      keyboard.inlinequery(chat_id, type_options + diet_options, 'Which food type are you looking for?')
  
-  if chat_history.lastest_message1(chat_id) =='Dish name' :
+  if chat_history.lastest_message1(chat_id) =='dish name' :
      
      food_api.new_id(chat_id,chat_id_list)
 
      checker = food_api.yummly_search(chat_id,chat_id_list,results_list,msg['text'], None, None, None)
-     print("!!!") #checkpoint
      recipe_handler(checker, chat_id)
      
   if chat_history.lastest_message1(chat_id) =='ingredient' :
@@ -82,14 +81,13 @@ def on_chat_message(msg):
 
   if chat_history.lastest_message2(chat_id) =='ingredient' :
      food_api.new_id(chat_id,chat_id_list)
-     print("##HAHAHA ", check.ingredient) #checkpoint
+     print("##in ", check.ingredient) #checkpoint
      print("##noning ", msg['text']) #checkpoint
 
      if keyboard.correction(msg['text']) == 'Nil':
       msg['text'] = " "
       print("##noning ", msg['text']) #checkpoint
      checker = food_api.yummly_search(chat_id,chat_id_list,results_list, None, check.ingredient, msg['text'], None)
-     print("???") #checkpoint
      recipe_handler(checker, chat_id)
 
 
