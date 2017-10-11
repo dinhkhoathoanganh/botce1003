@@ -2,6 +2,7 @@
 import telepot #pip install telepot, ... googlemaps, ... openpyxl
 from telepot.loop import MessageLoop
 import time
+import datetime
 import random
 from credentialshhanh import *
 from foodapi import *
@@ -40,6 +41,14 @@ class check :
 #Cases for messages received
 def on_chat_message(msg):
  content_type, chat_type, chat_id = telepot.glance(msg)
+
+
+ databasefile = open('database.txt','a')
+ databasefile.writelines(str(chat_id + ' : ' + msg['text'] + ' : ' + str(datetime.datetime.now())))
+ databasefile.close()
+
+
+
  
  #If the message is the location user sent
  if content_type == 'location' :
@@ -210,7 +219,7 @@ def on_callback_query(msg):
 
  chat_history.write_data(from_id,query_data)
  databasefile = open('database.txt','a')
- databasefile.writelines(str(chat_history.database))
+ databasefile.writelines(str(from_id + ' : ' + query_data + ' : ' + str(datetime.datetime.now())))
  databasefile.close()
  
 ###### EAT OUT #####
