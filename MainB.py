@@ -14,7 +14,7 @@ from gpstrack import *
 '''
 Intruction: type eatntu to restart the bot
 '''
-bot = telepot.Bot('406130496:AAFNc17PwDi7mmsYVAg2bYBtsc1LR1OlqVg')
+bot = telepot.Bot('446414243:AAG13E9L9ifrrYJc0JNHIHMpHBK-306sd2A')
 result_list ={}
 chat_id_list =[]
 
@@ -44,7 +44,7 @@ def on_chat_message(msg):
 
 
  databasefile = open('database.txt','a')
- databasefile.writelines(str(chat_id + ' : ' + msg['text'] + ' : ' + str(datetime.datetime.now())))
+ databasefile.writelines(str(chat_id) + ' : ' + msg['text'] + ' : ' + str(datetime.datetime.now()) + '\n')
  databasefile.close()
 
 
@@ -219,7 +219,7 @@ def on_callback_query(msg):
 
  chat_history.write_data(from_id,query_data)
  databasefile = open('database.txt','a')
- databasefile.writelines(str(from_id + ' : ' + query_data + ' : ' + str(datetime.datetime.now())))
+ databasefile.writelines(str(from_id) + ' : ' + query_data + ' : ' + str(datetime.datetime.now()) + '\n')
  databasefile.close()
  
 ###### EAT OUT #####
