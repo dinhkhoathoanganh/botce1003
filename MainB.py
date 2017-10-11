@@ -262,23 +262,26 @@ def on_callback_query(msg):
  if query_data == 'All dishes':
      row1 = xl.row(pref.canteen[from_id], 'C', pref.stall[from_id])
      print(row1)
-     row2 = xl.next_row(pref.canteen[from_id], 'C', pref.stall[from_id])
+     row2 = xl.next_row(pref.canteen[from_id], 'C', 'E', pref.stall[from_id])
      print(row2)
      message_out = ''
-     for i in range(row1, row2-2):
+     for i in range(row1, row2):
          message_out = message_out + str(pref.canteen[from_id]['D'][i].value) + ', ' + str(pref.canteen[from_id]['E'][i].value) + '\n'
      bot.sendMessage(from_id, message_out)
      bot.sendMessage(from_id, 'Type "eatntu" to restart')
  if query_data == 'Healthier choices':
      row1 = xl.row(pref.canteen[from_id], 'C', pref.stall[from_id])
-     print(row2)
-     row2 = xl.next_row(pref.canteen[from_id], 'C', pref.stall[from_id])
+     print(row1)
+     row2 = xl.next_row(pref.canteen[from_id], 'C', 'E', pref.stall[from_id])
      print(row2)
      message_out = ''
-     for i in range(row1, row2-2):
+     for i in range(row1, row2):
          if pref.canteen[from_id]['F'][i].value != None:
              message_out = message_out + str(pref.canteen[from_id]['D'][i].value) + ', '
-     bot.sendMessage(from_id, message_out)
+     if message_out == '':
+      bot.sendMessage(from_id, 'Sorry, this stall has no healthier choice.')
+     else:
+      bot.sendMessage(from_id, message_out)
      bot.sendMessage(from_id, 'Type "eatntu" to restart')
      
      
@@ -295,4 +298,4 @@ MessageLoop(bot, {'chat': on_chat_message,
 
 print ('Listening')
 while 1 :
-    time.sleep(10) 
+    time.sleep(1) 

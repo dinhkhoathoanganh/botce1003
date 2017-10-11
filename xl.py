@@ -87,11 +87,10 @@ class xl:
   return row
 
  #return the row of the next content in a column 
- def next_row(work_sheet, column_addr, content):
-  next_row = 0
-  next_content = ''
-  next_content = xl.column(work_sheet, column_addr)[1 + xl.column(work_sheet, column_addr).index(content)]
-  next_row = xl.row(work_sheet, column_addr, next_content)
+ def next_row(work_sheet, column1, column2 , content):
+  next_row = xl.row(work_sheet, column1, content)
+  while work_sheet[column2][next_row].value != None:
+   next_row = next_row + 1
   return next_row
 
  #return content of columns in all sheets and remove duplicates
