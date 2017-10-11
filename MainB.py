@@ -217,14 +217,13 @@ def on_callback_query(msg):
  wb = xl.load_wb('Canteen Restaurant List.xlsx')
 #USER CHOOSES A RANDOM DISH
  if query_data == 'A random dish' or query_data == 'Re-random a dish':
-     
-    canteen_name = str(random.choice(xl.sheets(wb)))
-    canteen = wb[canteen_name]
-    dish_name = str(random.choice(xl.column(canteen, 'D')))
-    price = str(xl.cor_content(canteen,'D','E', dish_name).value)
-    stall = str(xl.stall(canteen, 'D', 'C', dish_name))
-    bot.sendMessage(from_id, dish_name +', '+price+' at '+stall +' in '+ canteen_name)
-    keyboard.inlinequery(from_id , ['Re-random a dish'] , 'Type "eatntu" to restart' )
+  canteen_name = str(random.choice(xl.sheets(wb)))
+  canteen = wb[canteen_name]
+  dish_name = str(random.choice(xl.column(canteen, 'D')))
+  price = str(xl.cor_content(canteen,'D','E', dish_name))
+  stall = str(xl.stall(canteen, 'D', 'C', dish_name))
+  bot.sendMessage(from_id, dish_name +', '+price+' at '+stall +' in '+ canteen_name)
+  keyboard.inlinequery(from_id , ['Re-random a dish'] , 'Type "eatntu" to restart' )
 #USER CHOOSES A Favorite Food Type
  if query_data == 'A Food Type':
      pref.user_type[from_id] = 'A Food Type'
