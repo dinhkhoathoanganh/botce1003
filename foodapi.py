@@ -176,8 +176,10 @@ class food_api(object):
         if ingredients != None:
             ingredients = re.findall(r"[\w']+", ingredients.lower())
             non_ingredients = re.findall(r"[\w']+", non_ingredients.lower())
+        if cuisine != None:
+        	cuisine = "cuisine^cuisine-" + cuisine.lower()
 
-        search_payload = {"_app_id":yummly_id, "_app_key":yummly_key, "q":query, "allowedIngredient[]":ingredients, "allowedDiet[]":diet, "excludedIngredient[]":non_ingredients, "allowedCuisine[]":"cuisine^cuisine-" + cuisine.lower(), "maxTotalTimeInSeconds":time}
+        search_payload = {"_app_id":yummly_id, "_app_key":yummly_key, "q":query, "allowedIngredient[]":ingredients, "allowedDiet[]":diet, "excludedIngredient[]":non_ingredients, "allowedCuisine[]":cuisine, "maxTotalTimeInSeconds":time}
         print("search_payload: ", search_payload) #checkpoint
         data = food_api.fetch_data(search_payload, yummly_url)
         if food_api.data_check(data, 3) == 1:
