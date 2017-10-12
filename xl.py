@@ -52,8 +52,7 @@ class xl:
  #return corresponding content horizontally
  def cor_content(work_sheet,column1, column2, cell1_value):
   row = xl.row(work_sheet, column1, cell1_value)
-  content = work_sheet[column2+str(row)]
-  print('cor: ', content)
+  content = work_sheet[column2+str(row)].value
   return content
 
  #return corresponding content vertically
@@ -88,11 +87,10 @@ class xl:
   return row
 
  #return the row of the next content in a column 
- def next_row(work_sheet, column_addr, content):
-  next_row = 0
-  next_content = ''
-  next_content = xl.column(work_sheet, column_addr)[1 + xl.column(work_sheet, column_addr).index(content)]
-  next_row = xl.row(work_sheet, column_addr, next_content)
+ def next_row(work_sheet, column1, column2 , content):
+  next_row = xl.row(work_sheet, column1, content)
+  while work_sheet[column2][next_row].value != None:
+   next_row = next_row + 1
   return next_row
 
  #return content of columns in all sheets and remove duplicates
