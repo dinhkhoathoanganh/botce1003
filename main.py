@@ -58,9 +58,13 @@ def on_chat_message(msg):
  if content_type == 'location' :
   get_user_location(chat_id, msg)
   if  chat_history.lastest_message0(chat_id) == "search for direction":
+  	print(chat_history.lastest_message0(chat_id), "0000", chat_history.lastest_message1(chat_id))
   	keyboard.inlinequery(chat_id , canteen_location_list + ["Canteen nearest me!"], ' Choose your canteen ! ')
   elif chat_history.lastest_message0(chat_id) == "How to get there?":
+  	print(chat_history.lastest_message0(chat_id), "0001", chat_history.lastest_message1(chat_id))
   	get_direction(chat_id, "to " + pref.canteen_name[chat_id])
+  else:
+  	print(chat_history.lastest_message0(chat_id), chat_history.lastest_message2(chat_id), "0002", chat_history.lastest_message1(chat_id))
 
   pass
  
@@ -69,7 +73,7 @@ def on_chat_message(msg):
   chat_history.write_data(chat_id, msg['text'].lower())
   #Check edge cases when the user type spam messages
   if (keyboard.correction(msg['text']) not in ["Eatntu" , "/eatntu" , "Eat Ntu" , "Eat Out" , "/eatout" , "/eatin" , "Eat In" , "Dish Name" , "Ingredient" , "Give location ?", "How to get there?", "Search For Direction", "/searchfordirection", "Canteen nearest me!", "/searchdirection" , "/start","/mydisheslist", "My Dishes List","Food Type"] and chat_history.lastest_message1(chat_id)  not in ["dish name" , "ingredient"]) and chat_history.lastest_message2(chat_id)  not in ["ingredient"] or keyboard.correction(msg['text']) == False :
-     bot.sendMessage(chat_id , "Oops you have typed in the wrong syntax . Please type 'eatntu' or /eatntu to restart")
+     bot.sendMessage(chat_id , "Oops you have typed in the wrong syntax . Please type 'eatntu' or '/eatntu' to restart")
   #Response for /start
   if keyboard.correction(msg['text']) == '/start' :
       bot.sendMessage(chat_id , " Hello and welcome to @eat_NTUbot ! Let's eat the whole NTU together , I mean , eat the food in NTU . Now to start , please type '/eatntu' or 'Eat NTU' !")
@@ -142,7 +146,7 @@ def on_chat_message(msg):
       keyboard.inlinequery(chat_id, ['A random dish','A Food Type','A Canteen'], 'What do you want to search?')
   
   #Response for /searchfordirection with its recognisable variations 
-  if (keyboard.correction(msg['text']) == 'Search For Direction' or msg['text'] == "/searchfordirection"):
+  if keyboard.correction(msg['text']) == 'Search For Direction' or msg['text'] == "/searchfordirection":
       keyboard.location(chat_id)
        
   databasefile = open('database.txt','a')
@@ -181,7 +185,7 @@ def get_direction(from_id, canteen_name):
      	bot.sendMessage(from_id,"Estimated distance: "+ str(distance))     #Send the statics map snapshot of the location using Google Maps API
      	google_maps.get_photo(destination)
      	bot.sendPhoto(chat_id=from_id, photo=open('phototestt1.jpeg', 'rb'))
-     	bot.sendMessage(from_id,"Hope you won't get lost! Type 'eatNTU' or /eatntu restart")
+     	bot.sendMessage(from_id,"Hope you won't get lost! Please type 'eatntu' or '/eatntu' to restart")
 
      else:
      	bot.sendMessage(from_id , keyboard.check_error(checker, from_id)) 
@@ -242,11 +246,8 @@ def on_callback_query(msg):
  if query_data == "Canteen nearest me!":
   	keyboard.inlinequery(from_id, google_maps.sort_nearby_place(check.user_location, "PlaceID.xlsx", "placeid"), "Food places listed from nearest to furthest for you...")
   	pass
- 
- #We always ask user's for location as they will be on the move and may need new direction instructions again according to their new location
- if (query_data == "How to get there?"):
+ if query_data == "How to get there?":
  	keyboard.location(from_id)
-
 
 ###### EAT OUT #####
  wb = xl.load_wb('Canteen Restaurant List.xlsx')
@@ -258,32 +259,23 @@ def on_callback_query(msg):
   price = str(xl.cor_content(canteen,'D','E', dish_name))
   stall = str(xl.stall(canteen, 'D', 'C', dish_name))  
   dish_msg = "✌ Join 'ChipsMORE! the Explorer' to eat " + dish_name +', for $'+price+' at '+stall +' in '+ canteen_name
-  if canteen_name == 'Cafes and Eateries':
-      keyboard.inlinequery(from_id , ['Re-random a dish'], dish_msg)
-  else:
-      keyboard.inlinequery(from_id, ['How to get there?', 'Re-random a dish'], dish_msg)
-      pref.canteen_name[from_id] = canteen_name
-
-  bot.sendMessage(from_id, "Or.. if you are satisfied, type 'eatNTU' or /eatntu to restart")
+  keyboard.inlinequery(from_id, ['How to get there?', 'Re-random a dish'], dish_msg)
+  bot.sendMessage(from_id, "Or.. if you are satisfied, Please type 'eatntu' or '/eatntu' to restart")
 #USER CHOOSES A Favorite Food Type
  if query_data == 'A Food Type':
      pref.user_type[from_id] = 'A Food Type'
      print("inlinequery: ", query_data)
      keyboard.inlinequery(from_id, xl.all_columns(wb, 'B'), 'Choose your food type:')
 
- if (query_data in xl.all_columns(wb, 'B')) and pref.user_type[from_id] == 'A Food Type': ##############################
+ if (query_data in xl.all_columns(wb, 'B')) and pref.user_type[from_id] == 'A Food Type':
      pref.food_type[from_id] = query_data
-     random_stall_list = random.sample(xl.stall_and_sheet(wb, 'B', 'C', pref.food_type[from_id]), 10)
-     keyboard.inlinequery10(from_id, random_stall_list, 'Here are the stalls')
+     keyboard.inlinequery(from_id, xl.stall_and_sheet(wb, 'B', 'C', pref.food_type[from_id]), 'Here are the stalls')
  if query_data in xl.stall_and_sheet(wb, 'B', 'C', pref.food_type[from_id]):
      print(query_data.split)
      pref.stall[from_id] = query_data.split(' in ')[0]
      pref.canteen_name[from_id] = query_data.split(' in ')[1]
      pref.canteen[from_id] = wb[pref.canteen_name[from_id]]
-     if pref.canteen_name[from_id] == 'Cafes and Eateries':
-     	keyboard.inlinequery(from_id, ['All dishes', 'Healthier choices'], 'You did choose '+ query_data)
-     else:
-     	keyboard.inlinequery(from_id, ['All dishes', 'Healthier choices', 'How to get there?'], 'You did choose '+ query_data)
+     keyboard.inlinequery(from_id, ['All dishes', 'Healthier choices', 'How to get there?'], 'You did choose '+ query_data)
     
 #USER CHOOSES A CANTEEN
  if query_data == 'A Canteen':
@@ -295,10 +287,7 @@ def on_callback_query(msg):
      keyboard.inlinequery(from_id, xl.column(pref.canteen[from_id], 'C'), 'You did choose '+ pref.canteen_name[from_id] +', choose a stall')
  if (query_data in xl.column(pref.canteen[from_id], 'C')) and (pref.user_type[from_id] == 'A Canteen'):
      pref.stall[from_id] = str(query_data)
-     if pref.canteen_name[from_id] == 'Cafes and Eateries':
-     	keyboard.inlinequery(from_id, ['All dishes', 'Healthier choices'], 'You did choose '+ query_data)
-     else:
-     	keyboard.inlinequery(from_id, ['All dishes', 'Healthier choices', 'How to get there?'], 'You did choose '+ query_data)
+     keyboard.inlinequery(from_id, ['All dishes', 'Healthier choices', 'How to get there?'], 'You did choose '+ query_data)
  if query_data == 'All dishes':
      row1 = xl.row(pref.canteen[from_id], 'C', pref.stall[from_id])
      print("#####", row1)
@@ -307,8 +296,9 @@ def on_callback_query(msg):
      message_out = ''
      for i in range(row1, row2):
          message_out = message_out + str("★ " + pref.canteen[from_id]['D'][i].value) + ', $' + str(pref.canteen[from_id]['E'][i].value) + '\n'
+         print(message_out)
      bot.sendMessage(from_id, message_out)
-     bot.sendMessage(from_id, 'Type "eatntu" or /eatntu to restart')
+     bot.sendMessage(from_id, "Please type 'eatntu' or '/eatntu' to restart")
  if query_data == 'Healthier choices':
      row1 = xl.row(pref.canteen[from_id], 'C', pref.stall[from_id])
      print(row1)
@@ -322,7 +312,7 @@ def on_callback_query(msg):
       bot.sendMessage(from_id, 'Sorry, this stall has no healthier choice.')
      else:
       bot.sendMessage(from_id, message_out)
-     bot.sendMessage(from_id, 'Type "eatntu" or /eatntu to restart')
+     bot.sendMessage(from_id, "Please type 'eatntu' or '/eatntu' to restart")
 
      
  print('Callback Query:', query_id, from_id, query_data)
