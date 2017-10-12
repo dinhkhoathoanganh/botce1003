@@ -1,3 +1,8 @@
+#This file saves chat history for some purposes of Eat In. I did make it, but dont use it anymore. I dont know why the teammates use it.
+#please write the discription for it.
+#K
+
+
 class chat_history:
 
   database = {} #database (dict)

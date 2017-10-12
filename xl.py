@@ -1,20 +1,23 @@
-import openpyxl
+#This file contains functions for processing, reading, writing excel files
 
+
+
+import openpyxl
 class xl:
 
-#load a workbook from file
+#load a workbook from file. Assign a excel file to a variable.
   def load_wb(file_name): #file_name (str)
     return openpyxl.load_workbook(file_name)
 
-#load a worksheet from a worksheet
+#load a worksheet from a worksheet. Assign a sheet in excel work book variable to a variable. I don't use it much.
   def load_ws(work_book, ws_name): #ws_name (str)
     return work_book[ws_name]
 
-#save a workbook to file
+#save a workbook to file. I did make it to save user reviews.
   def save_wb(work_book, file_name):
     work_book.save(file_name)
 
-#return a cell CONTENT #cells_addr str
+#return a cell CONTENT. 
   def cell(work_sheet, cell_addr):
     return work_sheet[cell_addr].value
 
@@ -30,36 +33,6 @@ class xl:
         content_list = content_list + [str(cell_name.value)]
     return content_list
 
-#return CONTENT of a column and remove None cell #cot doc
-  def column_non_remove(work_sheet, column_addr):
-    content_list = []
-    for cell_name in work_sheet[column_addr]:
-      content_list = content_list + [str(cell_name.value)]
-    return content_list
-
-
-#return CONTENT of a column-range #row1,2 either string or int
-  def col_range(work_sheet, column_addr, row1, row2):
-    content = []
-    for i in range(int(row1), int(row2)+1):
-      if work_sheet[column_addr][i].value != None:
-        content = content + [work_sheet[column_addr][i].value]
-    return content
-
-
-#return corresponding content horizontally
-  def cor_content(work_sheet,column1, column2, cell1_value):
-    row = xl.row(work_sheet, column1, cell1_value)
-    content = work_sheet[column2+str(row)].value
-    return content
-
-#return corresponding content vertically
-  def cor_content_col(work_sheet,row1, row2, cell1_value):
-    content = []
-    for i in range(len(work_sheet[str(row1)])):
-      if cell1_value == str(work_sheet[str(row1)][i].value):
-        cell_col = chr(i + 65) #65 corresponds to A
-    return xl.cell(work_sheet,cell_col + str(row2))
 
 
 #return stall names with dishes name
@@ -84,7 +57,7 @@ class xl:
         row = 1 + work_sheet[column_addr].index(cell_content)
     return row
 
-#return the row of the next content in a column 
+#Actually, i don't know how to call this function. Its purpose is finding the row that end of a stall in excel file.
   def next_row(work_sheet, column1, column2 , content):
     next_row = xl.row(work_sheet, column1, content)
     while work_sheet[column2][next_row].value != None:
