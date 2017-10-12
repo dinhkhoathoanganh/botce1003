@@ -177,7 +177,7 @@ class food_api(object):
             ingredients = re.findall(r"[\w']+", ingredients.lower())
             non_ingredients = re.findall(r"[\w']+", non_ingredients.lower())
 
-        search_payload = {"_app_id":yummly_id, "_app_key":yummly_key, "q":query, "allowedIngredient[]":ingredients, "allowedDiet[]":diet, "excludedIngredient[]":non_ingredients, "allowedCuisine[]":cuisine, "maxTotalTimeInSeconds":time}
+        search_payload = {"_app_id":yummly_id, "_app_key":yummly_key, "q":query, "allowedIngredient[]":ingredients, "allowedDiet[]":diet, "excludedIngredient[]":non_ingredients, "allowedCuisine[]":"cuisine^cuisine-" + cuisine.lower(), "maxTotalTimeInSeconds":time}
         print("search_payload: ", search_payload) #checkpoint
         data = food_api.fetch_data(search_payload, yummly_url)
         if food_api.data_check(data, 3) == 1:
@@ -191,6 +191,7 @@ class food_api(object):
 
     #API Call recipe yummly for data (3rd branch - search according to food type)
     def yummly_type_match(chat_id, chat_id_list, results_list, search_type):
+        print("### ", search_type)
         if search_type in type_options:
             food_api.yummly_search(chat_id, chat_id_list, results_list, None,None,None,search_type)
         elif search_type in diet_options:
