@@ -10,19 +10,19 @@ from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboar
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton
 
 from telepot.namedtuple import InlineQueryResultArticle, InlineQueryResultPhoto, InputTextMessageContent
-bot = telepot.Bot('446414243:AAG13E9L9ifrrYJc0JNHIHMpHBK-306sd2A')
+bot = telepot.Bot('406130496:AAFNc17PwDi7mmsYVAg2bYBtsc1LR1OlqVg')
 class keyboard :
     def customkeyboard(choice1 , choice2 , chat , chat_id) :
         
         markup = ReplyKeyboardRemove()
-        bot.sendMessage(chat_id, 'Oke lah , got it !', reply_markup=markup)
+        bot.sendMessage(chat_id, 'Oke lah, got it!', reply_markup=markup)
         markup = ReplyKeyboardMarkup(keyboard=[[ choice1 , KeyboardButton(text= choice2 )],], resize_keyboard=True)
                  
         bot.sendMessage(chat_id, chat, reply_markup=markup)
     def customkeyboard3(choice1 , choice2, choice3 , chat , chat_id) :
         
         markup = ReplyKeyboardRemove()
-        bot.sendMessage(chat_id, 'Oke lah , got it !', reply_markup=markup)
+        bot.sendMessage(chat_id, 'Oke lah, got it!', reply_markup=markup)
         markup = ReplyKeyboardMarkup(keyboard=[[ choice1 , choice2,], 
                                                 [choice3],], resize_keyboard=True)
                  
@@ -30,7 +30,7 @@ class keyboard :
     def location(chat_id) :
         markup = ReplyKeyboardRemove()
         keyboard = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='Sure! Send My Location',request_location=True)]], resize_keyboard=True, one_time_keyboard=True)
-        bot.sendMessage(chat_id, 'Give location ?', reply_markup=keyboard)
+        bot.sendMessage(chat_id, 'Give location?', reply_markup=keyboard)
 
     def inlinequery10(chatid , listx , chat ) :
         all = []
@@ -50,6 +50,7 @@ class keyboard :
         for i in listx: 
           element = [InlineKeyboardButton(text=  i , callback_data = i)]
           all.append(element)
+        print("!@#!#@#")
         keyboard = InlineKeyboardMarkup(inline_keyboard= all)
         bot.sendMessage(chatid , chat , reply_markup=keyboard)
 

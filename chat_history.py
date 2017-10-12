@@ -5,6 +5,8 @@ class chat_history:
  def show_chat(chat_id):
   return chat_history.database[chat_id]
  #return lastest message
+ def lastest_message0(chat_id):
+  return chat_history.show_chat(chat_id)[len(chat_history.show_chat(chat_id))-1]
  def lastest_message1(chat_id):
   return chat_history.show_chat(chat_id)[len(chat_history.show_chat(chat_id))-2]
  #return lastest message 2 (the message before the lastest message)

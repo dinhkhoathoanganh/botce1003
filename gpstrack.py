@@ -103,7 +103,7 @@ class google_maps:
 		#Get direction
 		search_payload = {"origin": origin, "destination": destination, "key": google_key}
 		results_list_dir[chat_id_dir] = google_maps.fetch_data(search_payload, direction_url, 0)
-
+		print("@#$@#$ ", results_list_dir[chat_id_dir])
 		return results_list_dir
 
 	#Refine the direction instructions

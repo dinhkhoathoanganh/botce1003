@@ -1,4 +1,4 @@
-#version Yummly debugged 10/8
+#version Yummly debugged 10/12
 import telepot #pip install telepot, ... googlemaps, ... openpyxl
 from telepot.loop import MessageLoop
 import time
@@ -14,7 +14,7 @@ from gpstrack import *
 '''
 Intruction: type eatntu to restart the bot
 '''
-bot = telepot.Bot('446414243:AAG13E9L9ifrrYJc0JNHIHMpHBK-306sd2A')
+bot = telepot.Bot('406130496:AAFNc17PwDi7mmsYVAg2bYBtsc1LR1OlqVg')
 result_list ={}
 chat_id_list =[]
 
@@ -37,31 +37,42 @@ class check :
     user_location = ''
     ingredient = ''
     
-    
+def voting_ad(msg):
+	content_type, chat_type, chat_id = telepot.glance(msg)
+	data = [0]*6 + [1]*2 + [2]*2
+
+	if (random.choice(data) == 1):
+		print("1")
+		bot.sendMessage(chat_id, 'WHEAT a second… Vote for team ChipsMORE! if you like our bot!!!')
+	elif (random.choice(data)) == 2:
+		print("2")
+		bot.sendMessage(chat_id, 'By the way, CHIPZ in a VOTE for team ChipsMORE! ;)')
+	print("@@")
+
+
 #Cases for messages received
 def on_chat_message(msg):
  content_type, chat_type, chat_id = telepot.glance(msg)
-
-
- databasefile = open('database.txt','a')
- databasefile.writelines(str(chat_id) + ' : ' + msg['text'] + ' : ' + str(datetime.datetime.now()) + '\n')
- databasefile.close()
-
-
-
  
  #If the message is the location user sent
  if content_type == 'location' :
-  bot.sendMessage(chat_id, "Thanks for sharing your location :)")
-  check.user_location = str(msg['location']['latitude']) + "," + str(msg['location']['longitude'])
-  print("@@@ ", check.user_location, "@@ ", canteen_location_list) #checkpoint
-  keyboard.inlinequery(chat_id , canteen_location_list + ["Canteen nearest me!"], ' Choose your canteen ! ')
-  
+  get_user_location(chat_id, msg)
+  if  chat_history.lastest_message0(chat_id) == "search for direction":
+  	print(chat_history.lastest_message0(chat_id), "0000", chat_history.lastest_message1(chat_id))
+  	keyboard.inlinequery(chat_id , canteen_location_list + ["Canteen nearest me!"], ' Choose your canteen ! ')
+  elif chat_history.lastest_message0(chat_id) == "How to get there?":
+  	print(chat_history.lastest_message0(chat_id), "0001", chat_history.lastest_message1(chat_id))
+  	get_direction(chat_id, "to " + pref.canteen_name[chat_id])
+  else:
+  	print(chat_history.lastest_message0(chat_id), chat_history.lastest_message2(chat_id), "0002", chat_history.lastest_message1(chat_id))
+
+  pass
+ 
  #If the message is the chat text
  elif content_type == 'text' :    
   chat_history.write_data(chat_id, msg['text'].lower())
   #Check edge cases when the user type spam messages
-  if (keyboard.correction(msg['text']) not in ["Eatntu" , "/eatntu" , "Eat Ntu" , "Eat Out" , "/eatout" , "/eatin" , "Eat In" , "Dish Name" , "Ingredient" , "Give location ?","Search For Direction", "/searchfordirection", "Canteen nearest me!", "/searchdirection" , "/start","/mydisheslist", "My Dishes List","Food Type"] and chat_history.lastest_message1(chat_id)  not in ["dish name" , "ingredient"]) and chat_history.lastest_message2(chat_id)  not in ["ingredient"] or keyboard.correction(msg['text']) == False :
+  if (keyboard.correction(msg['text']) not in ["Eatntu" , "/eatntu" , "Eat Ntu" , "Eat Out" , "/eatout" , "/eatin" , "Eat In" , "Dish Name" , "Ingredient" , "Give location ?", "How to get there?", "Search For Direction", "/searchfordirection", "Canteen nearest me!", "/searchdirection" , "/start","/mydisheslist", "My Dishes List","Food Type"] and chat_history.lastest_message1(chat_id)  not in ["dish name" , "ingredient"]) and chat_history.lastest_message2(chat_id)  not in ["ingredient"] or keyboard.correction(msg['text']) == False :
      bot.sendMessage(chat_id , "Oops you have typed in the wrong syntax . Please type 'eatntu' to restart")
   #Response for /start
   if keyboard.correction(msg['text']) == '/start' :
@@ -69,7 +80,9 @@ def on_chat_message(msg):
   #Response for /eatNTU with its recognisable variations    
   if keyboard.correction(msg['text'])  == 'Eatntu' or keyboard.correction(msg['text']) == 'Eat Ntu' or msg['text'] == '/eatntu':
      keyboard.customkeyboard3('Eat Out' , 'Eat In ', 'Search For Direction', "let's see what u want to do", chat_id)
-  
+     #Message to ask for voting
+     voting_ad(msg)
+
 ###### EAT IN #####
   #Response for /eatin with its recognisable variations 
   if keyboard.correction(msg['text']) == 'Eat In' or msg['text'] == "/eatin" :
@@ -133,10 +146,13 @@ def on_chat_message(msg):
       keyboard.inlinequery(chat_id, ['A random dish','A Food Type','A Canteen'], 'What do you want to search?')
   
   #Response for /searchfordirection with its recognisable variations 
-  if keyboard.correction(msg['text']) == 'Search For Direction' or msg['text'] == "/searchfordirection" :
+  if keyboard.correction(msg['text']) == 'Search For Direction' or msg['text'] == "/searchfordirection":
       keyboard.location(chat_id)
        
-      
+  databasefile = open('database.txt','a')
+  databasefile.writelines(str(chat_id) + ' : ' + msg['text'] + ' : ' + str(datetime.datetime.now()) + '\n')
+  databasefile.close()
+
 #Allow users to search individual info of each dish in the result list. To minimize API Call per search, we save the entire search result of each user in the collated dictionary results_list. 
 #When the user need pieces of info, we do not need to perform another API call but to fetch it in results_list. 
 #The dictionary is stored in the program itself in stead of writing in an external file so as to speed up the read and write process.     
@@ -147,26 +163,57 @@ def recipe_handler(checker, from_id):
   
   #Edge case when the API Call return an error. Notify the user (No result from the search, API Call limit reached, Other external errors...)
   else:        
-    bot.sendMessage(from_id , keyboard.check_error(checker, from_id)[0] )
+    bot.sendMessage(from_id , keyboard.check_error(checker, from_id))
+
+def get_user_location(from_id, msg):
+  bot.sendMessage(from_id, "Thanks for sharing your location :)")
+  check.user_location = str(msg['location']['latitude']) + "," + str(msg['location']['longitude'])
+
+def get_direction(from_id, canteen_name):
+     destination = google_maps.canteen_latlng("PlaceID.xlsx", "placeid", canteen_name)
+     google_maps.new_id(from_id, chat_id_list_dir)
+     #Find direction with Google Maps API and print out the direction instructions + estimated distance
+     checker = google_maps.direction(from_id, chat_id_list_dir, results_list_dir, check.user_location, destination)
+     if keyboard.check_error(checker, from_id) == 0:
+     	instructions = google_maps.direction_instructions(from_id, results_list_dir)
+     	distance = google_maps.calculate_distance(from_id, results_list_dir)
+     	bot.sendMessage(from_id,"Here are the instructions " + canteen_name + ":")
+     	if isinstance(instructions, list): #check for []
+     		bot.sendMessage(from_id , '\n'.join(str(x) for x in instructions)) 
+     	else:
+     		bot.sendMessage(from_id , ' '.join(str(x) for x in instructions))     
+     	bot.sendMessage(from_id,"Estimated distance: "+ str(distance))     #Send the statics map snapshot of the location using Google Maps API
+     	google_maps.get_photo(destination)
+     	bot.sendPhoto(chat_id=from_id, photo=open('phototestt1.jpeg', 'rb'))
+     	bot.sendMessage(from_id,"Hope you won't get lost! Type 'eatNTU' restart")
+
+     else:
+     	bot.sendMessage(from_id , keyboard.check_error(checker, from_id)) 
 
 #Cases for query received
 def on_callback_query(msg): 
  query_id, from_id, query_data = telepot.glance(msg, flavor='callback_query')
  
+  #Record chat history
+ chat_history.write_data(from_id,query_data)
+ databasefile = open('database.txt','a')
+ databasefile.writelines(str(from_id) + ' : ' + query_data + ' : ' + str(datetime.datetime.now()) + '\n')
+ databasefile.close()
+
  #If the query data is in the food type list (When the user chooses to search by food type)
  for i in type_options + diet_options:
       if query_data == i:
         food_api.new_id(from_id, chat_id_list)
         checker = food_api.yummly_type_match(from_id, chat_id_list, results_list, query_data)
         recipe_handler(checker, from_id)
-        break
+        pass
 
  #If the query data is in the list of dishes searched by the user
  for i in check.keyin :
      if query_data == i :
         check.recipeindex = keyboard.list_order( i , check.keyin)
         keyboard.inlinequery10(from_id , list(headers_yummly) , " What do u want to see about " + i + "?" )
-        break
+        pass
 
  #If the query data is in the list of info for food API 
  for i in headers_yummly:
@@ -177,51 +224,31 @@ def on_callback_query(msg):
     if keyboard.check_error(checker, from_id) == 0:
       if isinstance(checker, list): #Check for first []
       	if isinstance(checker[0], list): #check for second []
-      		bot.sendMessage(from_id , ', '.join(str(x) for x in checker[0]))
+      		bot.sendMessage(from_id , i + ": " + ', '.join(str(x) for x in checker[0]))
       	
       	else:
-      		bot.sendMessage(from_id , ' '.join(str(x) for x in checker))
+      		bot.sendMessage(from_id , i + ": " +' '.join(str(x) for x in checker))
       else:
-      	bot.sendMessage(from_id , checker)
+      	bot.sendMessage(from_id , i + ": " +checker)
     else:
-      bot.sendMessage(from_id , keyboard.check_error(checker, from_id)[0] ) 
-    break
+      bot.sendMessage(from_id , keyboard.check_error(checker, from_id)) 
+    pass
 
 ###### DIRECTION #####
  #When user wants to find direction to a certain food location
  for i in canteen_location_list :
      if query_data == i :
-         destination = google_maps.canteen_latlng("PlaceID.xlsx", "placeid", query_data)
-         google_maps.new_id(from_id, chat_id_list_dir)
-
-         #Find direction with Google Maps API and print out the direction instructions + estimated distance
-         google_maps.direction(from_id, chat_id_list_dir, results_list_dir, check.user_location, destination)
-         instructions = google_maps.direction_instructions(from_id, results_list_dir)
-         distance = google_maps.calculate_distance(from_id, results_list_dir)
-         bot.sendMessage(from_id,"Here are the instructions " + query_data + ":")
-         if isinstance(instructions, list): #check for []
-          bot.sendMessage(from_id , '\n'.join(str(x) for x in instructions)) 
-         else:
-          bot.sendMessage(from_id , ' '.join(str(x) for x in instructions))
-
-         bot.sendMessage(from_id,"Estimated distance: "+ str(distance))
-
-         #Send the statics map snapshot of the location using Google Maps API
-         google_maps.get_photo(destination)
-         bot.sendPhoto(chat_id=from_id, photo=open('phototestt1.jpeg', 'rb'))
-         bot.sendMessage(from_id,"Hope you won't get lost! Type eatNTU restart")
-         break   
+     	 get_direction(from_id, query_data)
+     pass   
  #Sort the food locations from nearest to furthest in straight-line distance in relation to the user's current location
  #We used straight-line distance instead of Google Maps's route distance in order to save significant number of API Call 
  #(Google API has limited API call rate, so this function will be more reliable when the users traffic is high)
  if query_data == "Canteen nearest me!":
   	keyboard.inlinequery(from_id, google_maps.sort_nearby_place(check.user_location, "PlaceID.xlsx", "placeid"), "Food places listed from nearest to furthest for you...")
+  	pass
+ if query_data == "How to get there?":
+ 	keyboard.location(from_id)
 
- chat_history.write_data(from_id,query_data)
- databasefile = open('database.txt','a')
- databasefile.writelines(str(from_id) + ' : ' + query_data + ' : ' + str(datetime.datetime.now()) + '\n')
- databasefile.close()
- 
 ###### EAT OUT #####
  wb = xl.load_wb('Canteen Restaurant List.xlsx')
 #USER CHOOSES A RANDOM DISH
@@ -232,11 +259,12 @@ def on_callback_query(msg):
   price = str(xl.cor_content(canteen,'D','E', dish_name))
   stall = str(xl.stall(canteen, 'D', 'C', dish_name))
   bot.sendMessage(from_id, dish_name +', '+price+' at '+stall +' in '+ canteen_name)
-  keyboard.inlinequery(from_id , ['Re-random a dish'] , 'Type "eatntu" to restart' )
+  keyboard.inlinequery(from_id , ['Re-random a dish'] , "Type 'eatntu' to restart" )
 #USER CHOOSES A Favorite Food Type
  if query_data == 'A Food Type':
      pref.user_type[from_id] = 'A Food Type'
-     keyboard.inlinequery(from_id, xl.all_columns(wb, 'B'), 'Choose:')
+     print("inlinequery: ", query_data)
+     keyboard.inlinequery(from_id, xl.all_columns(wb, 'B'), 'Choose your food type:')
 
  if (query_data in xl.all_columns(wb, 'B')) and pref.user_type[from_id] == 'A Food Type':
      pref.food_type[from_id] = query_data
@@ -246,7 +274,10 @@ def on_callback_query(msg):
      pref.stall[from_id] = query_data.split(' in ')[0]
      pref.canteen_name[from_id] = query_data.split(' in ')[1]
      pref.canteen[from_id] = wb[pref.canteen_name[from_id]]
-     keyboard.inlinequery(from_id, ['All dishes', 'Healthier choices'], 'You did choose '+ query_data)
+     if pref.canteen_name[from_id] == 'Cafes and Eateries':
+     	keyboard.inlinequery(from_id, ['All dishes', 'Healthier choices'], 'You did choose '+ query_data)
+     else:
+     	keyboard.inlinequery(from_id, ['All dishes', 'Healthier choices', 'How to get there?'], 'You did choose '+ query_data)
     
 #USER CHOOSES A CANTEEN
  if query_data == 'A Canteen':
@@ -258,15 +289,18 @@ def on_callback_query(msg):
      keyboard.inlinequery(from_id, xl.column(pref.canteen[from_id], 'C'), 'You did choose '+ pref.canteen_name[from_id] +', choose a stall')
  if (query_data in xl.column(pref.canteen[from_id], 'C')) and (pref.user_type[from_id] == 'A Canteen'):
      pref.stall[from_id] = str(query_data)
-     keyboard.inlinequery(from_id, ['All dishes', 'Healthier choices'], 'You did choose '+ pref.stall[from_id]+'.')
+     if pref.canteen_name[from_id] == 'Cafes and Eateries':
+     	keyboard.inlinequery(from_id, ['All dishes', 'Healthier choices'], 'You did choose '+ query_data)
+     else:
+     	keyboard.inlinequery(from_id, ['All dishes', 'Healthier choices', 'How to get there?'], 'You did choose '+ query_data)
  if query_data == 'All dishes':
      row1 = xl.row(pref.canteen[from_id], 'C', pref.stall[from_id])
-     print(row1)
+     print("#####", row1)
      row2 = xl.next_row(pref.canteen[from_id], 'C', 'E', pref.stall[from_id])
-     print(row2)
+     print("#####",row2)
      message_out = ''
      for i in range(row1, row2):
-         message_out = message_out + str(pref.canteen[from_id]['D'][i].value) + ', ' + str(pref.canteen[from_id]['E'][i].value) + '\n'
+         message_out = message_out + str("~ " + pref.canteen[from_id]['D'][i].value) + ', $' + str(pref.canteen[from_id]['E'][i].value) + '\n'
      bot.sendMessage(from_id, message_out)
      bot.sendMessage(from_id, 'Type "eatntu" to restart')
  if query_data == 'Healthier choices':
@@ -277,18 +311,19 @@ def on_callback_query(msg):
      message_out = ''
      for i in range(row1, row2):
          if pref.canteen[from_id]['F'][i].value != None:
-             message_out = message_out + str(pref.canteen[from_id]['D'][i].value) + ', '
+             message_out = message_out + str("~ " + pref.canteen[from_id]['D'][i].value) + '\n'
      if message_out == '':
       bot.sendMessage(from_id, 'Sorry, this stall has no healthier choice.')
      else:
       bot.sendMessage(from_id, message_out)
      bot.sendMessage(from_id, 'Type "eatntu" to restart')
-     
-     
 
      
  print('Callback Query:', query_id, from_id, query_data)
  bot.answerCallbackQuery(query_id, text='Got it...')
+
+     
+    
  
 
 

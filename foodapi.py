@@ -15,7 +15,7 @@ chat_id_list = []
 class food_api(object):
     #Global variable for the class
 
-    no_result = ["That's a typo!! Please type 'eatntu' to restart"]
+    no_result = "That's a typo!! Please type 'eatNTU' to restart!"
 
     #List (2): Info for each recipe name - differs in various API platform
     headers_puppy = {0: "title", 1: ["href", "Recipe directions"], 2: ["ingredients", "Ingredients"], 3: ["thumbnail", "Image"]}
