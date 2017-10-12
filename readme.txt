@@ -17,10 +17,10 @@ Description of files :
  Our eatNTU bot can access this Excel file to give out the names of canteens , or information about the stalls and the prices of dishes , as well as an addtional indication whether a dish is healthy . 
 
 - PlaceID.xlsx : A Excel file that indicates the locations of NTU canteens :
-     + Column contains the names of canteens.
+     + Column A contains the names of canteens.
      + Column B indicates the place ID of canteens.
-     + Column indicates the addresses of canteens.
-     + Column and column E respectively indicates the latitudes and longtitudes of canteens. 
+     + Column C indicates the addresses of canteens.
+     + Column D and column E respectively indicates the latitudes and longtitudes of canteens. 
  To save the number of API calls ( because it is limited ) we make it an offline database . And this will make the locations more standardized and error - free .
 
 
