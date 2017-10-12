@@ -1,3 +1,6 @@
+#This file save all messages from users with datetime
+
+
 436229273 : Eat Out : 2017-10-12 18:36:21.688100
 436229273 : A Food Type : 2017-10-12 18:36:23.283104
 436229273 : Chinese Cuisine : 2017-10-12 18:36:27.200879
