@@ -29,7 +29,7 @@ class keyboard :
                                                 [choice3],], resize_keyboard=True)
                  
         bot.sendMessage(chat_id, chat, reply_markup=markup)
-# Send a location request to that chat id
+# Send a location request to the given chat id
     def location(chat_id) :
         markup = ReplyKeyboardRemove()
         keyboard = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='Sure! Send My Location',request_location=True)]], resize_keyboard=True, one_time_keyboard=True)
