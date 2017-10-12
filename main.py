@@ -42,12 +42,9 @@ def voting_ad(msg):
 	data = [0]*6 + [1]*2 + [2]*2
 
 	if (random.choice(data) == 1):
-		print("1")
 		bot.sendMessage(chat_id, '☕ WHEAT a second… Vote for team ChipsMORE! if you like our bot!!!')
 	elif (random.choice(data)) == 2:
-		print("2")
 		bot.sendMessage(chat_id, 'By the way, CHIPZ in a VOTE for team ChipsMORE! (｡◕‿◕｡)')
-	print("@@")
 
 
 #Cases for messages received
@@ -57,14 +54,10 @@ def on_chat_message(msg):
  #If the message is the location user sent
  if content_type == 'location' :
   get_user_location(chat_id, msg)
-  if  chat_history.lastest_message0(chat_id) == "search for direction":
-  	print(chat_history.lastest_message0(chat_id), "0000", chat_history.lastest_message1(chat_id))
+  if  chat_history.lastest_message0(chat_id) == "search for direction" or msg['text'] == '/searchfordirection' :
   	keyboard.inlinequery(chat_id , canteen_location_list + ["Canteen nearest me!"], ' Choose your canteen ! ')
   elif chat_history.lastest_message0(chat_id) == "How to get there?":
-  	print(chat_history.lastest_message0(chat_id), "0001", chat_history.lastest_message1(chat_id))
   	get_direction(chat_id, "to " + pref.canteen_name[chat_id])
-  else:
-  	print(chat_history.lastest_message0(chat_id), chat_history.lastest_message2(chat_id), "0002", chat_history.lastest_message1(chat_id))
 
   pass
  
@@ -244,7 +237,7 @@ def on_callback_query(msg):
  #We used straight-line distance instead of Google Maps's route distance in order to save significant number of API Call 
  #(Google API has limited API call rate, so this function will be more reliable when the users traffic is high)
  if query_data == "Canteen nearest me!":
-  	keyboard.inlinequery(from_id, google_maps.sort_nearby_place(check.user_location, "PlaceID.xlsx", "placeid"), "Food places listed from nearest to furthest for you...")
+  	keyboard.inlinequery(from_id, google_maps.sort_nearby_place(check.user_location, "PlaceID.xlsx", "placeid"), "✌ Food places listed from nearest to furthest for you...")
   	pass
  if query_data == "How to get there?":
  	keyboard.location(from_id)
