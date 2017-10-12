@@ -252,7 +252,7 @@ def on_callback_query(msg):
 ###### EAT OUT #####
  wb = xl.load_wb('Canteen Restaurant List.xlsx')
 #USER CHOOSES A RANDOM DISH
- if query_data == 'A random dish' or query_data == 'Nay.. Re-random a dish':
+ if query_data == 'A random dish' or query_data == 'Re-random a dish':
   canteen_name = str(random.choice(xl.sheets(wb)))
   canteen = wb[canteen_name]
   dish_name = str(random.choice(xl.column(canteen, 'D')))
@@ -260,9 +260,10 @@ def on_callback_query(msg):
   stall = str(xl.stall(canteen, 'D', 'C', dish_name))  
   dish_msg = "✌ Join 'ChipsMORE! the Explorer' to eat " + dish_name +', for $'+price+' at '+stall +' in '+ canteen_name
   if canteen_name == 'Cafes and Eateries':
-      keyboard.inlinequery(from_id , ['Nay.. Re-random a dish'], dish_msg)
+      keyboard.inlinequery(from_id , ['Re-random a dish'], dish_msg)
   else:
-      keyboard.inlinequery(from_id, ['How to get there?', 'Nay.. Re-random a dish'], dish_msg)
+      keyboard.inlinequery(from_id, ['How to get there?', 'Re-random a dish'], dish_msg)
+      pref.canteen_name[from_id] = canteen_name
 
   bot.sendMessage(from_id, "Or.. if you are satisfied, type 'eatntu' to restart")
 #USER CHOOSES A Favorite Food Type
