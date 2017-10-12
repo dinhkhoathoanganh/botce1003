@@ -9,7 +9,7 @@ class xl:
   def load_wb(file_name): #file_name (str)
     return openpyxl.load_workbook(file_name)
 
-#load a worksheet from a worksheet. Assign a sheet in excel work book variable to a variable. I don't use it much.
+#load a worksheet from a workbook. Assign a sheet in excel work book variable to a variable. I don't use it much.
   def load_ws(work_book, ws_name): #ws_name (str)
     return work_book[ws_name]
 
@@ -57,7 +57,8 @@ class xl:
         row = 1 + work_sheet[column_addr].index(cell_content)
     return row
 
-#Actually, i don't know how to call this function. Its purpose is finding the row that end of a stall in excel file.
+#Actually, i don't know how to call this function. Its purpose is finding the row that end of a stall in excel file by an empty cell.
+#edge case: when count next_row to the last row of a column. i was going to an error that "tuple index is out of range". The easiest way to fix it is insert a row names "empty row" for each sheet after the last row to extend the range of tuple "work_sheet[column2]" which contains all cell of column 2
   def next_row(work_sheet, column1, column2 , content):
     next_row = xl.row(work_sheet, column1, content)
     while work_sheet[column2][next_row].value != None:
