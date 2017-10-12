@@ -3,6 +3,8 @@ import telepot
 
 from telepot.loop import MessageLoop
 
+import time
+
 from telepot.namedtuple import ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove, ForceReply
 
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton

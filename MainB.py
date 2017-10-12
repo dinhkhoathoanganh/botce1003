@@ -43,10 +43,10 @@ def voting_ad(msg):
 
 	if (random.choice(data) == 1):
 		print("1")
-		bot.sendMessage(chat_id, 'WHEAT a second… Vote for team ChipsMORE! if you like our bot!!!')
+		bot.sendMessage(chat_id, '☕ WHEAT a second… Vote for team ChipsMORE! if you like our bot!!!')
 	elif (random.choice(data)) == 2:
 		print("2")
-		bot.sendMessage(chat_id, 'By the way, CHIPZ in a VOTE for team ChipsMORE! ;)')
+		bot.sendMessage(chat_id, 'By the way, CHIPZ in a VOTE for team ChipsMORE! (｡◕‿◕｡)')
 	print("@@")
 
 
@@ -166,7 +166,7 @@ def recipe_handler(checker, from_id):
     bot.sendMessage(from_id , keyboard.check_error(checker, from_id))
 
 def get_user_location(from_id, msg):
-  bot.sendMessage(from_id, "Thanks for sharing your location :)")
+  bot.sendMessage(from_id, "Thanks for sharing your location ☺")
   check.user_location = str(msg['location']['latitude']) + "," + str(msg['location']['longitude'])
 
 def get_direction(from_id, canteen_name):
@@ -252,14 +252,19 @@ def on_callback_query(msg):
 ###### EAT OUT #####
  wb = xl.load_wb('Canteen Restaurant List.xlsx')
 #USER CHOOSES A RANDOM DISH
- if query_data == 'A random dish' or query_data == 'Re-random a dish':
+ if query_data == 'A random dish' or query_data == 'Nay.. Re-random a dish':
   canteen_name = str(random.choice(xl.sheets(wb)))
   canteen = wb[canteen_name]
   dish_name = str(random.choice(xl.column(canteen, 'D')))
   price = str(xl.cor_content(canteen,'D','E', dish_name))
-  stall = str(xl.stall(canteen, 'D', 'C', dish_name))
-  bot.sendMessage(from_id, dish_name +', '+price+' at '+stall +' in '+ canteen_name)
-  keyboard.inlinequery(from_id , ['Re-random a dish'] , "Type 'eatntu' to restart" )
+  stall = str(xl.stall(canteen, 'D', 'C', dish_name))  
+  dish_msg = "✌ Join 'ChipsMORE! the Explorer' to eat " + dish_name +', for $'+price+' at '+stall +' in '+ canteen_name
+  if canteen_name == 'Cafes and Eateries':
+      keyboard.inlinequery(from_id , ['Nay.. Re-random a dish'], dish_msg)
+  else:
+      keyboard.inlinequery(from_id, ['How to get there?', 'Nay.. Re-random a dish'], dish_msg)
+
+  bot.sendMessage(from_id, "Or.. if you are satisfied, type 'eatntu' to restart")
 #USER CHOOSES A Favorite Food Type
  if query_data == 'A Food Type':
      pref.user_type[from_id] = 'A Food Type'
@@ -300,7 +305,7 @@ def on_callback_query(msg):
      print("#####",row2)
      message_out = ''
      for i in range(row1, row2):
-         message_out = message_out + str("~ " + pref.canteen[from_id]['D'][i].value) + ', $' + str(pref.canteen[from_id]['E'][i].value) + '\n'
+         message_out = message_out + str("★ " + pref.canteen[from_id]['D'][i].value) + ', $' + str(pref.canteen[from_id]['E'][i].value) + '\n'
      bot.sendMessage(from_id, message_out)
      bot.sendMessage(from_id, 'Type "eatntu" to restart')
  if query_data == 'Healthier choices':
@@ -311,7 +316,7 @@ def on_callback_query(msg):
      message_out = ''
      for i in range(row1, row2):
          if pref.canteen[from_id]['F'][i].value != None:
-             message_out = message_out + str("~ " + pref.canteen[from_id]['D'][i].value) + '\n'
+             message_out = message_out + str("★ " + pref.canteen[from_id]['D'][i].value) + '\n'
      if message_out == '':
       bot.sendMessage(from_id, 'Sorry, this stall has no healthier choice.')
      else:
