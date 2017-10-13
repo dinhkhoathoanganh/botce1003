@@ -62,9 +62,7 @@ class google_maps:
   def fetch_data(search_payload, url, mode):
     if mode == 0:
       search_req = requests.get(url, params=search_payload)
-      print("#######", search_req) #checkpoint
-      data = search_req.json()  
-      print(data) #checkpoint	  
+      data = search_req.json()    
       if data["status"] == "OK":      
         return data		  
       elif data["status"] == "OVER_QUERY_LIMIT":
@@ -77,8 +75,6 @@ class google_maps:
         exit()  
     elif mode == 1:
       search_req = requests.get(url, params=search_payload, stream=True)
-      # print("#######", search_payload) #checkpoint
-      # print("#######", search_req) #checkpoint
       data = Image.open(search_req.raw).convert('RGB')
       data.save('phototest.jpeg', "JPEG")
       return data  
@@ -87,7 +83,6 @@ class google_maps:
     #Get direction
     search_payload = {"origin": origin, "destination": destination, "key": google_key}
     results_list_dir[chat_id_dir] = google_maps.fetch_data(search_payload, direction_url, 0)
-    print("@#$@#$ ", results_list_dir[chat_id_dir])
     return results_list_dir  
   #Refine the direction instructions
   def direction_instructions(chat_id_dir, results_list_dir):
@@ -97,7 +92,6 @@ class google_maps:
       j = results_list_dir[chat_id_dir]['routes'][0]['legs'][0]['steps'][i]['html_instructions']
       if '<div style="font-size:0.9em">' in j: #Special case in API Google Maps Call
         j = j.replace('<div style="font-size:0.9em">', '\n')
-        print("FOUND!! ", j, "FOUND ", j)
       clean_j =  re.sub('\<.*?\>', '', j)
       instructions.append(clean_j)
     return instructions	
@@ -149,7 +143,6 @@ class google_maps:
   	search_payload = {"center": destination_latlng, "zoom": "17", "size": "400x400", "key": google_key}
   	
   	data = google_maps.fetch_data(search_payload, map_url, 1)
-  	print("your photo: ", data) #checkpoint
   	return data
 
 

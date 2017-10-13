@@ -1,5 +1,4 @@
-#This file saves users's preferences. 
-
+#This file saves global variables to be modified cross-functions in main.py ie. users's preferences, indexes
 
 class pref:
   user_type = {} #random dish, chooses canteen or chooses a food type

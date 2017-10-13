@@ -32,7 +32,6 @@ class food_api(object):
     #Register new user on the results_list
     def new_id(chat_id, chat_id_list):
         chat_id_list = food_api.check_overlapping_id(chat_id, chat_id_list, results_list)
-        # print(chat_id_list) #checkpoint
         chat_id_list.append(chat_id)
         return chat_id_list
 
@@ -55,13 +54,9 @@ class food_api(object):
     def fetch_data(search_payload, url):
         search_req = requests.get(url, params=search_payload)
         
-        print(search_req) #checkpoint
         
         if search_req.status_code == requests.codes.ok:
-            data = search_req.json()
-            
-            print(data) #checkpoint
-            
+            data = search_req.json()        
             return data
         elif search_req.status_code == (403 or 409):
             print("Exceed rate limit! Contact your admin")
@@ -95,10 +90,7 @@ class food_api(object):
         elif indicator == "puppy":
             heading, api_item, recipe_item = food_api.headers_puppy[data_index][0], food_api.api_item_puppy, food_api.recipe_item_puppy
         else:
-            print(food_api.no_result)
             return {"Error": food_api.no_result}
-
-        # print("########", results_list) #checkpoint
 
         #mode 1 = list all recipe names found from the API call
         if mode == 1:
@@ -107,7 +99,6 @@ class food_api(object):
             if results_list[chat_id] != food_api.no_result:
                 for item in results_list[chat_id][1][api_item]:
                     output_list.append(item[recipe_item].strip())
-                # print(output_list) #checkpoint
                 return output_list
             else:
                 print(food_api.no_result)
@@ -115,15 +106,11 @@ class food_api(object):
 
         #mode 2 = list details according to the choossen recipe name
         elif mode == 2:
-            # print([results_list[chat_id][1][api_item]]) #checkpoint
-            # print([results_list[chat_id][1][api_item][recipe_index][heading]]) #checkpoint
             output_list = [results_list[chat_id][1][api_item][recipe_index][heading]]
 
             #use recipeID to search for recipe directions url --> to save one API Call from Yummly
             if (indicator == "yummly") and (data_index == 1):
                 output_list = [yummly_recipe_url + results_list[chat_id][1][api_item][recipe_index][heading]]
-            
-            # print("########", output_list) #checkpoint
             return output_list
         else:
             print('Out of range!')
@@ -180,20 +167,16 @@ class food_api(object):
         	cuisine = "cuisine^cuisine-" + cuisine.lower()
 
         search_payload = {"_app_id":yummly_id, "_app_key":yummly_key, "q":query, "allowedIngredient[]":ingredients, "allowedDiet[]":diet, "excludedIngredient[]":non_ingredients, "allowedCuisine[]":cuisine, "maxTotalTimeInSeconds":time}
-        print("search_payload: ", search_payload) #checkpoint
         data = food_api.fetch_data(search_payload, yummly_url)
         if food_api.data_check(data, 3) == 1:
-        	print("RESULT FOUND")
         	results_list[chat_id] = ["yummly", data]
         else:
-        	print("NOOOO RESULT FOUND")
         	results_list[chat_id] = {"Error": food_api.no_result}
 
         return results_list
 
     #API Call recipe yummly for data (3rd branch - search according to food type)
     def yummly_type_match(chat_id, chat_id_list, results_list, search_type):
-        print("### ", search_type)
         if search_type in type_options:
             food_api.yummly_search(chat_id, chat_id_list, results_list, None,None,None,search_type)
         elif search_type in diet_options:
@@ -203,13 +186,5 @@ class food_api(object):
             return {"Error": "Please choose something from the list!"}
             exit()
 
-    # #bot connector
-    # def keyword_to_list_recipe_info():
-    #     pass
-    #     new_id(chat_id, chat_id_list)
-        
-
-
-############### END OF CLASS ######################
         
 print("Foodapi has loaded!")

@@ -169,7 +169,7 @@ def on_callback_query(msg):
     if query_data == i :
       data_index = keyboard.list_order(query_data, headers_yummly)
       checker = food_api.search_chat_id(from_id, results_list, 2, pref.recipeindex-1, data_index)
-      print(query_data)
+
       if keyboard.check_error(checker, from_id) == 0:
         if isinstance(checker, list): #Check for first []
         	if isinstance(checker[0], list): #check for second []
@@ -283,9 +283,7 @@ def on_callback_query(msg):
   #the same as "All dishes"
   if query_data == 'Healthier choices':
     row1 = xl.row(pref.canteen[from_id], 'C', pref.stall[from_id])
-    print(row1)
     row2 = xl.next_row(pref.canteen[from_id], 'C', 'E', pref.stall[from_id])
-    print(row2)
     message_out = ''
     for i in range(row1, row2):
       if pref.canteen[from_id]['F'][i].value != None:
@@ -297,7 +295,6 @@ def on_callback_query(msg):
     bot.sendMessage(from_id, "Please type 'eatntu' or '/eatntu' to restart")
 
      
-  print('Callback Query:', query_id, from_id, query_data)
   bot.answerCallbackQuery(query_id, text='Got it...')
 
      

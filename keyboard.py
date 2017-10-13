@@ -32,7 +32,6 @@ class keyboard :
 #listx is a list of string . Create an inline query , with choices are the first 10 string elements in listx , then send it together with a chat to the given chat id .
   def inlinequery10(chatid , listx , chat ) :
     all = []
-    print("#### ", listx)
     for i in listx[:10]: #Only take first 10 top results (not to spam the bot chat)
       element = [InlineKeyboardButton(text=  i , callback_data = i)]
       all.append(element)
@@ -43,7 +42,6 @@ class keyboard :
  
   def inlinequery(chatid , listx , chat ) :
     all = []
-    print(listx) #checkpoint
     for i in listx: 
       element = [InlineKeyboardButton(text=  i , callback_data = i)]
       all.append(element)
@@ -68,7 +66,7 @@ class keyboard :
     bot.sendMessage(chat_id, 'Oke lah , got it !', reply_markup=markup)
 #check whether a string is in a list and return the order of the string in the list 
 
-  def list_order ( string , listt ) :
+  def list_order (string , listt) :
     count = 0
     for i in listt :
       count += 1
