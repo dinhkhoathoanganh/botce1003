@@ -1,10 +1,12 @@
----------------------------------------------------------Team ChipsMORE------------------------------------------------------------
+---------------------------------------------------------Team ChipsMORE!------------------------------------------------------------
 Team Member : Trinh Tuan Dung 
               Dinh Khoat Hoang Anh
               Nguyen Ngoc Khanh
               Fransiscus Xaverius Wilbert
               Stella Marcella Lie
 Bot Name : eatNTU (@eat_NTUbot)
+
+- main.py : Main Python file to run .
      
 Description of files :
 
@@ -22,6 +24,19 @@ Description of files :
      + Column C indicates the addresses of canteens.
      + Column D and column E respectively indicates the latitudes and longtitudes of canteens. 
  To save the number of API calls ( because it is limited ) we make it an offline database . And this will make the locations more standardized and error - free .
+ 
+- keyboard.py :  create custom keyboards & inline queries , correct user's typing errors ; as well as acting as a bridge between outputs of API platforms and chat messages in bot .
+- chat_history.py : This file saves chat history for some purposes of Eat In.
+- database.txt : This file saves chat history for further purposes.
+- credentialshhanh.py : save API keys and URL links to call API platform .
+- foodapi.py : call recipes using API platform " Yummly " (In case Yummly API calls runs out , use "Food2Fork" and "RecipePuppey" API platform ).
+- gpstrack.py : call direction instructions , calculate distances & call statics map using API platform "Google Maps".
+- phototest.JPEG : temporarily store statics map image to be sent to users . 
+- preferences.py : store global variables to be modified in main.py's functions , such as user's preference and indexes .
+- Procfile.py : for Heroku .  
+- requirements.txt : for Heroku .
+- xl.py : read , write and process the Excel file .
+
 
 
                                 
