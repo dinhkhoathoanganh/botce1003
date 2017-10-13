@@ -40,8 +40,8 @@ class xl:
     for i in range(len(work_sheet[column1])):
       if cell_value == str(work_sheet[column1][i].value):
         row = i +1
-      while str(type(work_sheet[column2][row-1].value)) == "<class 'NoneType'>":
-        row = row -1
+    while str(type(work_sheet[column2][row-1].value)) == "<class 'NoneType'>":
+      row = row -1
     return xl.cell(work_sheet, column2 + str(row))
 
 #return list of sheets
@@ -56,6 +56,13 @@ class xl:
       if cell_content.value == content:
         row = 1 + work_sheet[column_addr].index(cell_content)
     return row
+
+#return corresponding content horizontally
+  def cor_content(work_sheet,column1, column2, cell1_value):
+    print("#### ", column1, column2, cell1_value)
+    row = xl.row(work_sheet, column1, cell1_value)
+    content = work_sheet[column2+str(row)].value
+    return content
 
 #Actually, i don't know how to call this function. Its purpose is finding the row that end of a stall in excel file by an empty cell.
 #edge case: when count next_row to the last row of a column. i was going to an error that "tuple index is out of range". The easiest way to fix it is insert a row names "empty row" for each sheet after the last row to extend the range of tuple "work_sheet[column2]" which contains all cell of column 2
