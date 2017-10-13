@@ -1,4 +1,4 @@
----------------------------------------------------------Team ChipsMORE------------------------------------------------------------
+---------------------------------------------------------Team ChipsMORE!------------------------------------------------------------
 Team Member : Trinh Tuan Dung 
               Dinh Khoat Hoang Anh
               Nguyen Ngoc Khanh
@@ -22,6 +22,8 @@ Description of files :
      + Column C indicates the addresses of canteens.
      + Column D and column E respectively indicates the latitudes and longtitudes of canteens. 
  To save the number of API calls ( because it is limited ) we make it an offline database . And this will make the locations more standardized and error - free .
+ 
+Main Python file to run : MainK.py
 
 
                                 
