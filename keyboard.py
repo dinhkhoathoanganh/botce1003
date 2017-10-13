@@ -13,7 +13,7 @@ class keyboard :
     
 # remove the existing custom keyboard , then create a custom keyboard of 2 choices ( choice1 and choice2 ), then send it together with a message to the given chat id .
     def customkeyboard(choice1 , choice2 , chat , chat_id) :
-        
+           
         markup = ReplyKeyboardRemove()
         bot.sendMessage(chat_id, 'Oke lah, got it!', reply_markup=markup)
         markup = ReplyKeyboardMarkup(keyboard=[[ choice1 , KeyboardButton(text= choice2 )],], resize_keyboard=True)
