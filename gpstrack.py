@@ -80,7 +80,7 @@ class google_maps:
       # print("#######", search_payload) #checkpoint
       # print("#######", search_req) #checkpoint
       data = Image.open(search_req.raw).convert('RGB')
-      data.save('phototestt1.jpeg', "JPEG")
+      data.save('phototest.jpeg', "JPEG")
       return data  
   #Find direction with googlemaps (origin and direction in lat,lng) (default by driving - it is quite close to walking direction in NTU context, and this is more useful than walking search mode even when the user's location is very far away from the canteens)
   def direction(chat_id_dir, chat_id_list_dir, results_list_dir, origin, destination):
